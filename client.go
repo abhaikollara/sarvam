@@ -49,7 +49,7 @@ func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer, content
 
 // makeMultipartRequest makes a multipart request to the API.
 // but this either does not belong here or should be a more generic function
-func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model) (*http.Response, error) {
+func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model, languageCode *string, withTimestamps *bool) (*http.Response, error) {
 	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -77,6 +77,22 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model) (
 		err = writer.WriteField("model", string(*model))
 		if err != nil {
 			return nil, fmt.Errorf("failed to write model field: %w", err)
+		}
+	}
+
+	// Add language_code parameter if provided
+	if languageCode != nil {
+		err = writer.WriteField("language_code", *languageCode)
+		if err != nil {
+			return nil, fmt.Errorf("failed to write language_code field: %w", err)
+		}
+	}
+
+	// Add with_timestamps parameter if provided
+	if withTimestamps != nil {
+		err = writer.WriteField("with_timestamps", fmt.Sprintf("%t", *withTimestamps))
+		if err != nil {
+			return nil, fmt.Errorf("failed to write with_timestamps field: %w", err)
 		}
 	}
 
