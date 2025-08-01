@@ -21,7 +21,10 @@ func TestTranslateWithOptions(t *testing.T) {
 	outputScript := OutputScriptRoman
 	numeralsFormat := NumeralsFormatInternational
 
-	options := &TranslateOptions{
+	options := &TranslateParams{
+		Input:               "Hello",
+		SourceLanguage:      LanguageEnglish,
+		TargetLanguage:      LanguageHindi,
 		SpeakerGender:       &speakerGender,
 		Mode:                &mode,
 		Model:               &model,
@@ -30,7 +33,7 @@ func TestTranslateWithOptions(t *testing.T) {
 		NumeralsFormat:      &numeralsFormat,
 	}
 
-	_, err = client.TranslateWithOptions("Hello", LanguageEnglish, LanguageHindi, options)
+	_, err = client.TranslateWithOptions(options)
 	if err == nil {
 		t.Error("Expected error for invalid API key, got nil")
 	}
@@ -45,13 +48,16 @@ func TestTranslateInputLengthValidation(t *testing.T) {
 	mode := TranslationModeFormal
 	model := TranslationModelMayuraV1
 
-	options := &TranslateOptions{
-		SpeakerGender: &speakerGender,
-		Mode:          &mode,
-		Model:         &model,
+	options := &TranslateParams{
+		Input:          longInput,
+		SourceLanguage: LanguageEnglish,
+		TargetLanguage: LanguageHindi,
+		SpeakerGender:  &speakerGender,
+		Mode:           &mode,
+		Model:          &model,
 	}
 
-	_, err := client.TranslateWithOptions(longInput, LanguageEnglish, LanguageHindi, options)
+	_, err := client.TranslateWithOptions(options)
 	if err == nil {
 		t.Error("Expected error for input too long, got nil")
 	}
@@ -60,11 +66,14 @@ func TestTranslateInputLengthValidation(t *testing.T) {
 	veryLongInput := string(make([]byte, 2001))
 	sarvamModel := TranslationModelSarvamTranslate
 
-	sarvamOptions := &TranslateOptions{
-		Model: &sarvamModel,
+	sarvamOptions := &TranslateParams{
+		Input:          veryLongInput,
+		SourceLanguage: LanguageEnglish,
+		TargetLanguage: LanguageHindi,
+		Model:          &sarvamModel,
 	}
 
-	_, err = client.TranslateWithOptions(veryLongInput, LanguageEnglish, LanguageHindi, sarvamOptions)
+	_, err = client.TranslateWithOptions(sarvamOptions)
 	if err == nil {
 		t.Error("Expected error for input too long, got nil")
 	}
@@ -77,19 +86,19 @@ func TestTranslateOptionsValidation(t *testing.T) {
 		value    interface{}
 		expected string
 	}{
-		{"SpeakerGenderMale", SpeakerGenderMale, "Male"},
-		{"SpeakerGenderFemale", SpeakerGenderFemale, "Female"},
-		{"TranslationModeFormal", TranslationModeFormal, "formal"},
-		{"TranslationModeModernColloquial", TranslationModeModernColloquial, "modern-colloquial"},
-		{"TranslationModeClassicColloquial", TranslationModeClassicColloquial, "classic-colloquial"},
-		{"TranslationModeCodeMixed", TranslationModeCodeMixed, "code-mixed"},
-		{"TranslationModelMayuraV1", TranslationModelMayuraV1, "mayura:v1"},
-		{"TranslationModelSarvamTranslate", TranslationModelSarvamTranslate, "sarvam-translate:v1"},
-		{"OutputScriptRoman", OutputScriptRoman, "roman"},
-		{"OutputScriptFullyNative", OutputScriptFullyNative, "fully-native"},
-		{"OutputScriptSpokenFormInNative", OutputScriptSpokenFormInNative, "spoken-form-in-native"},
-		{"NumeralsFormatInternational", NumeralsFormatInternational, "international"},
-		{"NumeralsFormatNative", NumeralsFormatNative, "native"},
+		{"SpeakerGenderMale", string(SpeakerGenderMale), "Male"},
+		{"SpeakerGenderFemale", string(SpeakerGenderFemale), "Female"},
+		{"TranslationModeFormal", string(TranslationModeFormal), "formal"},
+		{"TranslationModeModernColloquial", string(TranslationModeModernColloquial), "modern-colloquial"},
+		{"TranslationModeClassicColloquial", string(TranslationModeClassicColloquial), "classic-colloquial"},
+		{"TranslationModeCodeMixed", string(TranslationModeCodeMixed), "code-mixed"},
+		{"TranslationModelMayuraV1", string(TranslationModelMayuraV1), "mayura:v1"},
+		{"TranslationModelSarvamTranslate", string(TranslationModelSarvamTranslate), "sarvam-translate:v1"},
+		{"OutputScriptRoman", string(OutputScriptRoman), "roman"},
+		{"OutputScriptFullyNative", string(OutputScriptFullyNative), "fully-native"},
+		{"OutputScriptSpokenFormInNative", string(OutputScriptSpokenFormInNative), "spoken-form-in-native"},
+		{"NumeralsFormatInternational", string(NumeralsFormatInternational), "international"},
+		{"NumeralsFormatNative", string(NumeralsFormatNative), "native"},
 	}
 
 	for _, tc := range testCases {
