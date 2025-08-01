@@ -32,7 +32,7 @@ type SpeechToText struct {
 	Transcript         string              `json:"transcript"`
 	Timestamps         *Timestamps         `json:"timestamps,omitempty"`
 	DiarizedTranscript *DiarizedTranscript `json:"diarized_transcript,omitempty"`
-	LanguageCode       string              `json:"language_code"`
+	LanguageCode       Language            `json:"language_code"`
 }
 
 // String returns the transcribed text.
@@ -44,13 +44,20 @@ func (s *SpeechToText) String() string {
 type SpeechToTextParams struct {
 	FilePath       string             // Required: Path to the audio file
 	Model          *SpeechToTextModel // Optional: Model to use (default: saarika:v2.5)
-	LanguageCode   *string            // Optional: Language code for the input audio
+	LanguageCode   *Language          // Optional: Language code for the input audio
 	WithTimestamps *bool              // Optional: Whether to include timestamps in response
 }
 
 // SpeechToText converts speech from an audio file to text.
 func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToText, error) {
-	resp, err := c.makeMultipartRequest("/speech-to-text", params.FilePath, params.Model, params.LanguageCode, params.WithTimestamps)
+	// Convert *Language to *string for the API call
+	var languageCodeStr *string
+	if params.LanguageCode != nil {
+		codeStr := string(*params.LanguageCode)
+		languageCodeStr = &codeStr
+	}
+
+	resp, err := c.makeMultipartRequest("/speech-to-text", params.FilePath, params.Model, languageCodeStr, params.WithTimestamps)
 	if err != nil {
 		return nil, err
 	}
@@ -62,19 +69,33 @@ func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToText, error) 
 	}
 
 	// Parse the response
-	var response SpeechToText
+	type speechToTextResponse struct {
+		RequestId          string              `json:"request_id"`
+		Transcript         string              `json:"transcript"`
+		Timestamps         *Timestamps         `json:"timestamps,omitempty"`
+		DiarizedTranscript *DiarizedTranscript `json:"diarized_transcript,omitempty"`
+		LanguageCode       string              `json:"language_code"`
+	}
+
+	var response speechToTextResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	return &response, nil
+	return &SpeechToText{
+		RequestId:          response.RequestId,
+		Transcript:         response.Transcript,
+		Timestamps:         response.Timestamps,
+		DiarizedTranscript: response.DiarizedTranscript,
+		LanguageCode:       mapLanguageCodeToLanguage(response.LanguageCode),
+	}, nil
 }
 
 // SpeechToTextTranslate represents the result of a speech-to-text-translate operation.
 type SpeechToTextTranslate struct {
 	RequestId          string              `json:"request_id"`
 	Transcript         string              `json:"transcript"`
-	LanguageCode       string              `json:"language_code"`
+	LanguageCode       Language            `json:"language_code"`
 	DiarizedTranscript *DiarizedTranscript `json:"diarized_transcript,omitempty"`
 }
 
@@ -104,10 +125,22 @@ func (c *Client) SpeechToTextTranslate(params SpeechToTextTranslateParams) (*Spe
 	}
 
 	// Parse the response
-	var response SpeechToTextTranslate
+	type speechToTextTranslateResponse struct {
+		RequestId          string              `json:"request_id"`
+		Transcript         string              `json:"transcript"`
+		LanguageCode       string              `json:"language_code"`
+		DiarizedTranscript *DiarizedTranscript `json:"diarized_transcript,omitempty"`
+	}
+
+	var response speechToTextTranslateResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	return &response, nil
+	return &SpeechToTextTranslate{
+		RequestId:          response.RequestId,
+		Transcript:         response.Transcript,
+		LanguageCode:       mapLanguageCodeToLanguage(response.LanguageCode),
+		DiarizedTranscript: response.DiarizedTranscript,
+	}, nil
 }

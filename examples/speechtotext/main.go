@@ -14,6 +14,13 @@ func main() {
 	if apiKey == "" {
 		log.Fatal("SARVAM_API_KEY environment variable is required")
 	}
+	if len(os.Args) < 2 {
+		log.Fatal("Usage: go run main.go <audio_file_path>")
+	}
+	filepath := os.Args[1]
+	if _, err := os.Stat(filepath); os.IsNotExist(err) {
+		log.Fatalf("File not found: %s", filepath)
+	}
 
 	// Create a new client
 	client := sarvam.NewClient(apiKey)
@@ -21,7 +28,7 @@ func main() {
 	// Example 1: Basic speech-to-text
 	fmt.Println("=== Speech-to-Text Example ===")
 	params := sarvam.SpeechToTextParams{
-		FilePath: "path/to/your/audio.wav",
+		FilePath: filepath,
 		Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
 	}
 
@@ -37,7 +44,7 @@ func main() {
 	// Example 2: Speech-to-text with timestamps
 	fmt.Println("\n=== Speech-to-Text with Timestamps ===")
 	paramsWithTimestamps := sarvam.SpeechToTextParams{
-		FilePath:       "path/to/your/audio.wav",
+		FilePath:       filepath,
 		Model:          &sarvam.SpeechToTextModelSaarikaV2dot5,
 		WithTimestamps: sarvam.Bool(true),
 	}
@@ -56,9 +63,9 @@ func main() {
 	// Example 3: Speech-to-text-translate (auto-detect language and translate to English)
 	fmt.Println("\n=== Speech-to-Text Translate Example ===")
 	translateParams := sarvam.SpeechToTextTranslateParams{
-		FilePath: "path/to/your/audio.wav",
+		FilePath: filepath,
 		Model:    &sarvam.SpeechToTextTranslateModelSaarasV2dot5,
-		Prompt:   sarvam.String("This is a conversation about technology"),
+		Prompt:   sarvam.String("This is a conversation is a greeting"),
 	}
 
 	translateResult, err := client.SpeechToTextTranslate(translateParams)
