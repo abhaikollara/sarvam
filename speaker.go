@@ -1,5 +1,6 @@
 package sarvam
 
+// Speaker represents a voice/speaker for text-to-speech conversion.
 type Speaker string
 
 var (

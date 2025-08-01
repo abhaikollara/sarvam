@@ -6,14 +6,14 @@ import (
 	"net/http"
 )
 
-// Timestamps represents word-level timing information
+// Timestamps represents word-level timing information for speech-to-text results.
 type Timestamps struct {
 	Words            []string  `json:"words"`
 	StartTimeSeconds []float64 `json:"start_time_seconds"`
 	EndTimeSeconds   []float64 `json:"end_time_seconds"`
 }
 
-// DiarizedEntry represents a single speaker's transcript segment
+// DiarizedEntry represents a single speaker's transcript segment.
 type DiarizedEntry struct {
 	Transcript       string  `json:"transcript"`
 	StartTimeSeconds float64 `json:"start_time_seconds"`
@@ -21,7 +21,7 @@ type DiarizedEntry struct {
 	SpeakerID        string  `json:"speaker_id"`
 }
 
-// DiarizedTranscript represents the complete diarized transcript
+// DiarizedTranscript represents the complete diarized transcript.
 type DiarizedTranscript struct {
 	Entries []DiarizedEntry `json:"entries"`
 }
@@ -35,11 +35,12 @@ type SpeechToText struct {
 	LanguageCode       string              `json:"language_code"`
 }
 
+// String returns the transcribed text.
 func (s *SpeechToText) String() string {
 	return s.Transcript
 }
 
-// SpeechToTextParams contains parameters for speech-to-text conversion
+// SpeechToTextParams contains parameters for speech-to-text conversion.
 type SpeechToTextParams struct {
 	FilePath       string             // Required: Path to the audio file
 	Model          *SpeechToTextModel // Optional: Model to use (default: saarika:v2.5)
@@ -77,11 +78,12 @@ type SpeechToTextTranslate struct {
 	DiarizedTranscript *DiarizedTranscript `json:"diarized_transcript,omitempty"`
 }
 
+// String returns the transcribed and translated text.
 func (s *SpeechToTextTranslate) String() string {
 	return s.Transcript
 }
 
-// SpeechToTextTranslateParams contains parameters for speech-to-text-translate conversion
+// SpeechToTextTranslateParams contains parameters for speech-to-text-translate conversion.
 type SpeechToTextTranslateParams struct {
 	FilePath string                      // Required: Path to the audio file
 	Prompt   *string                     // Optional: Conversation context to boost model accuracy

@@ -1,6 +1,6 @@
 package sarvam
 
-// ChatCompletionModel specifies the model to use for chat completions
+// ChatCompletionModel specifies the model to use for chat completions.
 type ChatCompletionModel string
 
 var (
@@ -8,13 +8,14 @@ var (
 	ChatCompletionModelSarvamM  ChatCompletionModel = "sarvam-m"
 )
 
+// TextToSpeechModel specifies the model to use for text-to-speech conversion.
 type TextToSpeechModel string
 
 var (
 	TextToSpeechModelBulbulV2 TextToSpeechModel = "bulbul:v2"
 )
 
-// SpeechToTextModel specifies the model to use for speech-to-text conversion
+// SpeechToTextModel specifies the model to use for speech-to-text conversion.
 type SpeechToTextModel string
 
 var (
@@ -24,7 +25,7 @@ var (
 	SpeechToTextModelSaarikaFlash  SpeechToTextModel = "saarika:flash"
 )
 
-// SpeechToTextTranslateModel specifies the model to use for speech-to-text with translation
+// SpeechToTextTranslateModel specifies the model to use for speech-to-text with translation.
 type SpeechToTextTranslateModel string
 
 var (
@@ -34,7 +35,7 @@ var (
 	SpeechToTextTranslateModelSaarasFlash  SpeechToTextTranslateModel = "saaras:flash"
 )
 
-// TranslationModel specifies the translation model to use
+// TranslationModel specifies the translation model to use.
 type TranslationModel string
 
 var (

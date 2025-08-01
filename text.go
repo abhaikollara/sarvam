@@ -18,18 +18,25 @@ const (
 type TranslationMode string
 
 const (
-	TranslationModeFormal            TranslationMode = "formal"
-	TranslationModeModernColloquial  TranslationMode = "modern-colloquial"
+	// TranslationModeFormal represents formal translation style.
+	TranslationModeFormal TranslationMode = "formal"
+	// TranslationModeModernColloquial represents modern colloquial translation style.
+	TranslationModeModernColloquial TranslationMode = "modern-colloquial"
+	// TranslationModeClassicColloquial represents classic colloquial translation style.
 	TranslationModeClassicColloquial TranslationMode = "classic-colloquial"
-	TranslationModeCodeMixed         TranslationMode = "code-mixed"
+	// TranslationModeCodeMixed represents code-mixed translation style.
+	TranslationModeCodeMixed TranslationMode = "code-mixed"
 )
 
 // OutputScript controls the transliteration style applied to the output text.
 type OutputScript string
 
 const (
-	OutputScriptRoman              OutputScript = "roman"
-	OutputScriptFullyNative        OutputScript = "fully-native"
+	// OutputScriptRoman represents Roman script output.
+	OutputScriptRoman OutputScript = "roman"
+	// OutputScriptFullyNative represents fully native script output.
+	OutputScriptFullyNative OutputScript = "fully-native"
+	// OutputScriptSpokenFormInNative represents spoken form in native script output.
 	OutputScriptSpokenFormInNative OutputScript = "spoken-form-in-native"
 )
 
@@ -37,8 +44,10 @@ const (
 type NumeralsFormat string
 
 const (
+	// NumeralsFormatInternational represents international numeral format.
 	NumeralsFormatInternational NumeralsFormat = "international"
-	NumeralsFormatNative        NumeralsFormat = "native"
+	// NumeralsFormatNative represents native numeral format.
+	NumeralsFormatNative NumeralsFormat = "native"
 )
 
 // Translation represents the result of a translation operation.
@@ -148,7 +157,7 @@ func (c *Client) TranslateWithOptions(params *TranslateParams) (*Translation, er
 	}, nil
 }
 
-// LanguageIdentification represents the result of a language identification operation.
+// LanguageIdentification represents the result of language identification.
 type LanguageIdentification struct {
 	RequestId string
 	Language  Language

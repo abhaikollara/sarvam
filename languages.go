@@ -1,5 +1,6 @@
 package sarvam
 
+// Language represents a supported language code.
 type Language string
 
 const (
@@ -56,6 +57,7 @@ var languageNameMap = map[Language]string{
 	LanguageNepali:    "Nepali",
 }
 
+// String returns the human-readable name of the language.
 func (l Language) String() string {
 	return languageNameMap[l]
 }
@@ -86,6 +88,7 @@ var languageMap = map[string]Language{
 	"sd-IN":  LanguageSindhi,
 }
 
+// mapLanguageCodeToLanguage converts a language code string to a Language type.
 func mapLanguageCodeToLanguage(code string) Language {
 	if language, ok := languageMap[code]; ok {
 		return language
@@ -93,6 +96,7 @@ func mapLanguageCodeToLanguage(code string) Language {
 	return Language(code)
 }
 
+// Script represents a writing script.
 type Script string
 
 const (

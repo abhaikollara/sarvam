@@ -1,3 +1,4 @@
+// Package sarvam provides a Go client for the Sarvam AI API.
 package sarvam
 
 import (
@@ -10,20 +11,24 @@ import (
 	"os"
 )
 
+// Client represents a Sarvam AI API client.
 type Client struct {
 	baseURL string
 	apiKey  string
 }
 
+// NewClient creates a new Sarvam AI client with the provided API key.
 func NewClient(apiKey string) *Client {
 	const baseURL = "https://api.sarvam.ai"
 	return &Client{apiKey: apiKey, baseURL: baseURL}
 }
 
+// SetBaseURL allows customization of the API endpoint URL.
 func (c *Client) SetBaseURL(baseURL string) {
 	c.baseURL = baseURL
 }
 
+// makeJsonHTTPRequest sends a JSON HTTP request to the Sarvam AI API.
 func (c *Client) makeJsonHTTPRequest(method, url string, body any) (*http.Response, error) {
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
@@ -35,6 +40,7 @@ func (c *Client) makeJsonHTTPRequest(method, url string, body any) (*http.Respon
 
 }
 
+// makeHTTPRequest sends an HTTP request to the Sarvam AI API.
 func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer, contentType string) (*http.Response, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -47,8 +53,7 @@ func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer, content
 	return http.DefaultClient.Do(req)
 }
 
-// makeMultipartRequest makes a multipart request to the API.
-// but this either does not belong here or should be a more generic function
+// makeMultipartRequest sends a multipart form request to the Sarvam AI API.
 func (c *Client) makeMultipartRequest(endpoint, filePath string, model *SpeechToTextModel, languageCode *string, withTimestamps *bool) (*http.Response, error) {
 	// Open the file
 	file, err := os.Open(filePath)
@@ -105,7 +110,7 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *SpeechTo
 	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
 }
 
-// makeMultipartRequestTranslate makes a multipart request to the speech-to-text-translate API.
+// makeMultipartRequestTranslate sends a multipart form request for speech-to-text translation.
 func (c *Client) makeMultipartRequestTranslate(endpoint, filePath string, prompt *string, model *SpeechToTextTranslateModel) (*http.Response, error) {
 	// Open the file
 	file, err := os.Open(filePath)
@@ -154,6 +159,7 @@ func (c *Client) makeMultipartRequestTranslate(endpoint, filePath string, prompt
 	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
 }
 
+// HTTPError represents an error response from the Sarvam AI API.
 type HTTPError struct {
 	StatusCode int
 	Message    string
@@ -161,6 +167,7 @@ type HTTPError struct {
 	RequestID  string
 }
 
+// Error implements the error interface for HTTPError.
 func (e *HTTPError) Error() string {
 	if e.Code != "" && e.RequestID != "" {
 		return fmt.Sprintf("status code: %d, code: %s, message: %s, request_id: %s", e.StatusCode, e.Code, e.Message, e.RequestID)
@@ -168,7 +175,7 @@ func (e *HTTPError) Error() string {
 	return fmt.Sprintf("status code: %d, message: %s", e.StatusCode, e.Message)
 }
 
-// parseAPIError parses the error response from the API
+// parseAPIError parses an HTTP error response from the Sarvam AI API.
 func parseAPIError(resp *http.Response) error {
 	// Try to read the response body
 	body, err := io.ReadAll(resp.Body)
@@ -205,18 +212,22 @@ func parseAPIError(resp *http.Response) error {
 	}
 }
 
+// Bool returns a pointer to the boolean value.
 func Bool(b bool) *bool {
 	return &b
 }
 
+// Float64 returns a pointer to the float64 value.
 func Float64(f float64) *float64 {
 	return &f
 }
 
+// Int returns a pointer to the int value.
 func Int(i int) *int {
 	return &i
 }
 
+// String returns a pointer to the string value.
 func String(s string) *string {
 	return &s
 }

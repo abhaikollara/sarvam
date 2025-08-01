@@ -14,11 +14,12 @@ type TextToSpeech struct {
 	Data      []byte
 }
 
-// Save saves the text-to-speech data as a WAV file
+// Save saves the text-to-speech data as a WAV file.
 func (t *TextToSpeech) Save(filename string) error {
 	return os.WriteFile(filename+".wav", t.Data, 0644)
 }
 
+// TextToSpeechParams contains all parameters for text-to-speech conversion.
 type TextToSpeechParams struct {
 	Text                string
 	TargetLanguage      Language
@@ -31,6 +32,7 @@ type TextToSpeechParams struct {
 	Model               *TextToSpeechModel
 }
 
+// SpeechSampleRate represents the audio sample rate for text-to-speech output.
 type SpeechSampleRate int
 
 var (
@@ -100,6 +102,7 @@ func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeech, error) 
 	}, nil
 }
 
+// convertAndConcatBase64ToBytes converts multiple base64-encoded audio chunks to a single byte array.
 func convertAndConcatBase64ToBytes(base64Strs []string) ([]byte, error) {
 	var data []byte
 	for _, base64Str := range base64Strs {
@@ -112,6 +115,7 @@ func convertAndConcatBase64ToBytes(base64Strs []string) ([]byte, error) {
 	return data, nil
 }
 
+// convertBase64ToBytes converts a single base64-encoded string to bytes.
 func convertBase64ToBytes(base64Str string) ([]byte, error) {
 	decodedBytes, err := base64.StdEncoding.DecodeString(base64Str)
 	if err != nil {
