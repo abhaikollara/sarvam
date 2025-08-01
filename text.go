@@ -152,7 +152,7 @@ func (c *Client) TranslateWithOptions(params *TranslateParams) (*Translation, er
 type LanguageIdentification struct {
 	RequestId string
 	Language  Language
-	Script    string
+	Script    Script
 }
 
 // IdentifyLanguage identifies the language (e.g., en-IN, hi-IN) and script (e.g., Latin, Devanagari) of the input text, supporting multiple languages.
@@ -185,7 +185,7 @@ func (c *Client) IdentifyLanguage(input string) (*LanguageIdentification, error)
 	return &LanguageIdentification{
 		RequestId: response.RequestId,
 		Language:  mapLanguageCodeToLanguage(response.LanguageCode),
-		Script:    response.ScriptCode,
+		Script:    mapScriptCodeToScript(response.ScriptCode),
 	}, nil
 }
 
