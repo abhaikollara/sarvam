@@ -1,8 +1,8 @@
 # SarvamAI Go SDK
 
-<!-- [![Go Report Card](https://goreportcard.com/badge/code.abhai.dev/sarvam)](https://goreportcard.com/report/code.abhai.dev/sarvam)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/abhai/sarvam-go)](https://golang.org/dl/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) -->
+[![Go Report Card](https://goreportcard.com/badge/abhaikollara/sarvam)](https://goreportcard.com/report/abhaikollara/sarvam)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/abhaikollara/sarvam)](https://golang.org/dl/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 An unofficial Go SDK for the [Sarvam AI](https://sarvam.ai) APIs, providing easy access to Indian language AI services including translation, text-to-speech, chat completions, and language identification.
 
