@@ -64,7 +64,11 @@ func (t *Translation) String() string {
 // Translate converts text from one language to another while preserving its meaning.
 // This is the simple version that uses default options.
 func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode Language) (*Translation, error) {
-	return c.TranslateWithOptions(input, sourceLanguageCode, targetLanguageCode, nil)
+	return c.TranslateWithOptions(&TranslateParams{
+		Input:          input,
+		SourceLanguage: sourceLanguageCode,
+		TargetLanguage: targetLanguageCode,
+	})
 }
 
 // TranslateParams contains all optional parameters for translation.

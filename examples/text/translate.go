@@ -28,7 +28,10 @@ func main() {
 	outputScript := sarvam.OutputScriptRoman
 	numeralsFormat := sarvam.NumeralsFormatNative
 
-	options := &sarvam.TranslateOptions{
+	params := &sarvam.TranslateParams{
+		Input:               "Hello, how are you?",
+		SourceLanguage:      sarvam.LanguageEnglish,
+		TargetLanguage:      sarvam.LanguageHindi,
 		SpeakerGender:       &speakerGender,
 		Mode:                &mode,
 		Model:               &model,
@@ -37,12 +40,7 @@ func main() {
 		NumeralsFormat:      &numeralsFormat,
 	}
 
-	advancedResponse, err := client.TranslateWithOptions(
-		"Your EMI of Rs. 3000 is pending.",
-		sarvam.LanguageEnglish,
-		sarvam.LanguageHindi,
-		options,
-	)
+	advancedResponse, err := client.TranslateWithOptions(params)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
@@ -54,18 +52,16 @@ func main() {
 	sarvamMode := sarvam.TranslationModeFormal
 	sarvamPreprocessing := true
 
-	sarvamOptions := &sarvam.TranslateOptions{
+	sarvamParams := &sarvam.TranslateParams{
+		Input:               "मैं ऑफिस जा रहा हूँ",
+		SourceLanguage:      sarvam.LanguageHindi,
+		TargetLanguage:      sarvam.LanguageEnglish,
 		Model:               &sarvamModel,
 		Mode:                &sarvamMode,
 		EnablePreprocessing: &sarvamPreprocessing,
 	}
 
-	sarvamResponse, err := client.TranslateWithOptions(
-		"मैं ऑफिस जा रहा हूँ",
-		sarvam.LanguageHindi,
-		sarvam.LanguageEnglish,
-		sarvamOptions,
-	)
+	sarvamResponse, err := client.TranslateWithOptions(sarvamParams)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
