@@ -33,10 +33,7 @@ func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode 
 		defer resp.Body.Close()
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, &HTTPError{
-			StatusCode: resp.StatusCode,
-			Message:    resp.Status,
-		}
+		return nil, parseAPIError(resp)
 	}
 
 	type translateResponse struct {
@@ -77,10 +74,7 @@ func (c *Client) IdentifyLanguage(input string) (*LanguageIdentification, error)
 		defer resp.Body.Close()
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, &HTTPError{
-			StatusCode: resp.StatusCode,
-			Message:    resp.Status,
-		}
+		return nil, parseAPIError(resp)
 	}
 
 	type identifyLanguageResponse struct {
@@ -134,10 +128,7 @@ func (c *Client) Transliterate(input string, sourceLanguage Language, targetLang
 		defer resp.Body.Close()
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, &HTTPError{
-			StatusCode: resp.StatusCode,
-			Message:    resp.Status,
-		}
+		return nil, parseAPIError(resp)
 	}
 
 	type transliterationResponse struct {

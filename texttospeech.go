@@ -76,10 +76,7 @@ func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeech, error) 
 		defer resp.Body.Close()
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, &HTTPError{
-			StatusCode: resp.StatusCode,
-			Message:    resp.Status,
-		}
+		return nil, parseAPIError(resp)
 	}
 
 	type textToSpeechResponse struct {

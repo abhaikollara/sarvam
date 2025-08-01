@@ -1,8 +1,10 @@
 package sarvam
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -78,4 +80,39 @@ func TestHTTPError(t *testing.T) {
 		Message:    "Unauthorized",
 	}
 	assert.Equal(t, e.Error(), "status code: 401, message: Unauthorized")
+}
+
+func TestHTTPErrorWithAPIError(t *testing.T) {
+	e := &HTTPError{
+		StatusCode: http.StatusBadRequest,
+		Message:    "body.model : Input should be 'saarika:v1', 'saarika:v2', 'saarika:v2.5' or 'saarika:flash'",
+		Code:       "invalid_request_error",
+		RequestID:  "20250801_1f62ae94-d102-4513-a31d-bbb0718052dc",
+	}
+	expected := "status code: 400, code: invalid_request_error, message: body.model : Input should be 'saarika:v1', 'saarika:v2', 'saarika:v2.5' or 'saarika:flash', request_id: 20250801_1f62ae94-d102-4513-a31d-bbb0718052dc"
+	assert.Equal(t, e.Error(), expected)
+}
+
+func TestParseAPIError(t *testing.T) {
+	// Test with valid API error response
+	apiErrorJSON := `{
+		"error": {
+			"message": "body.model : Input should be 'saarika:v1', 'saarika:v2', 'saarika:v2.5' or 'saarika:flash'",
+			"code": "invalid_request_error",
+			"request_id": "20250801_1f62ae94-d102-4513-a31d-bbb0718052dc"
+		}
+	}`
+
+	resp := &http.Response{
+		StatusCode: http.StatusBadRequest,
+		Body:       io.NopCloser(strings.NewReader(apiErrorJSON)),
+	}
+
+	err := parseAPIError(resp)
+	httpErr, ok := err.(*HTTPError)
+	assert.True(t, ok)
+	assert.Equal(t, http.StatusBadRequest, httpErr.StatusCode)
+	assert.Equal(t, "body.model : Input should be 'saarika:v1', 'saarika:v2', 'saarika:v2.5' or 'saarika:flash'", httpErr.Message)
+	assert.Equal(t, "invalid_request_error", httpErr.Code)
+	assert.Equal(t, "20250801_1f62ae94-d102-4513-a31d-bbb0718052dc", httpErr.RequestID)
 }

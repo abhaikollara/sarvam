@@ -83,10 +83,7 @@ func (c *Client) ChatCompletion(req *ChatCompletionRequest) (*ChatCompletionResp
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, &HTTPError{
-			StatusCode: resp.StatusCode,
-			Message:    resp.Status,
-		}
+		return nil, parseAPIError(resp)
 	}
 
 	var response ChatCompletionResponse

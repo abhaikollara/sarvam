@@ -32,10 +32,7 @@ func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToText, error) 
 
 	// Check for HTTP errors
 	if resp.StatusCode != http.StatusOK {
-		return nil, &HTTPError{
-			StatusCode: resp.StatusCode,
-			Message:    resp.Status,
-		}
+		return nil, parseAPIError(resp)
 	}
 
 	// Parse the response

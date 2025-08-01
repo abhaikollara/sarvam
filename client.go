@@ -92,10 +92,52 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model) (
 type HTTPError struct {
 	StatusCode int
 	Message    string
+	Code       string
+	RequestID  string
 }
 
 func (e *HTTPError) Error() string {
+	if e.Code != "" && e.RequestID != "" {
+		return fmt.Sprintf("status code: %d, code: %s, message: %s, request_id: %s", e.StatusCode, e.Code, e.Message, e.RequestID)
+	}
 	return fmt.Sprintf("status code: %d, message: %s", e.StatusCode, e.Message)
+}
+
+// parseAPIError parses the error response from the API
+func parseAPIError(resp *http.Response) error {
+	// Try to read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		// If we can't read the body, return a basic error
+		return &HTTPError{
+			StatusCode: resp.StatusCode,
+			Message:    resp.Status,
+		}
+	}
+
+	// Try to parse as API error format
+	var apiError struct {
+		Error struct {
+			Message   string `json:"message"`
+			Code      string `json:"code"`
+			RequestID string `json:"request_id"`
+		} `json:"error"`
+	}
+
+	if err := json.Unmarshal(body, &apiError); err == nil && apiError.Error.Message != "" {
+		return &HTTPError{
+			StatusCode: resp.StatusCode,
+			Message:    apiError.Error.Message,
+			Code:       apiError.Error.Code,
+			RequestID:  apiError.Error.RequestID,
+		}
+	}
+
+	// If parsing fails, return the raw body as message
+	return &HTTPError{
+		StatusCode: resp.StatusCode,
+		Message:    string(body),
+	}
 }
 
 func Bool(b bool) *bool {
