@@ -86,17 +86,7 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model) (
 		return nil, fmt.Errorf("failed to close multipart writer: %w", err)
 	}
 
-	// Create the HTTP request
-	req, err := http.NewRequest(http.MethodPost, c.baseURL+endpoint, &requestBody)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create request: %w", err)
-	}
-
-	// Set headers
-	req.Header.Set("api-subscription-key", c.apiKey)
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	return http.DefaultClient.Do(req)
+	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody)
 }
 
 type HTTPError struct {
