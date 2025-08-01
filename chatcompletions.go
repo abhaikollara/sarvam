@@ -76,7 +76,7 @@ func (c *Client) ChatCompletion(req *ChatCompletionRequest) (*ChatCompletionResp
 		return nil, fmt.Errorf("model is required")
 	}
 
-	resp, err := c.makeHTTPRequest(http.MethodPost, c.baseURL+"/v1/chat/completions", req)
+	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/v1/chat/completions", req)
 	if err != nil {
 		return nil, err
 	}

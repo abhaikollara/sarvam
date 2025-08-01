@@ -25,7 +25,7 @@ func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode 
 		"source_language_code": sourceLanguageCode,
 		"target_language_code": targetLanguageCode,
 	}
-	resp, err := c.makeHTTPRequest(http.MethodPost, c.baseURL+"/translate", reqBody)
+	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/translate", reqBody)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (c *Client) IdentifyLanguage(input string) (*LanguageIdentification, error)
 	var payload = map[string]string{
 		"input": input,
 	}
-	resp, err := c.makeHTTPRequest(http.MethodPost, c.baseURL+"/text-lid", payload)
+	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/text-lid", payload)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func (c *Client) Transliterate(input string, sourceLanguage Language, targetLang
 		"source_language_code": sourceLanguage,
 		"target_language_code": targetLanguage,
 	}
-	resp, err := c.makeHTTPRequest(http.MethodPost, c.baseURL+"/transliterate", payload)
+	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/transliterate", payload)
 	if err != nil {
 		return nil, err
 	}

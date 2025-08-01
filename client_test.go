@@ -27,7 +27,7 @@ func TestMakeHTTPRequest(t *testing.T) {
 	client := NewClient(testApiKey)
 	client.SetBaseURL(httpTestServer.URL)
 
-	response, err := client.makeHTTPRequest("GET", httpTestServer.URL+"/v1/test", nil)
+	response, err := client.makeJsonHTTPRequest("GET", httpTestServer.URL+"/v1/test", nil)
 	assert.NoError(t, err)
 	assert.Equal(t, response.StatusCode, 200)
 }

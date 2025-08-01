@@ -68,7 +68,7 @@ func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeech, error) 
 		payload["model"] = *params.Model
 	}
 
-	resp, err := c.makeHTTPRequest(http.MethodPost, c.baseURL+"/text-to-speech", payload)
+	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/text-to-speech", payload)
 	if err != nil {
 		return nil, err
 	}

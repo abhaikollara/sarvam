@@ -24,13 +24,19 @@ func (c *Client) SetBaseURL(baseURL string) {
 	c.baseURL = baseURL
 }
 
-func (c *Client) makeHTTPRequest(method, url string, body any) (*http.Response, error) {
+func (c *Client) makeJsonHTTPRequest(method, url string, body any) (*http.Response, error) {
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonBody))
+	bodyBytes := bytes.NewBuffer(jsonBody)
+	return c.makeHTTPRequest(method, url, bodyBytes)
+
+}
+
+func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer) (*http.Response, error) {
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
