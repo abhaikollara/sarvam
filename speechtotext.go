@@ -68,3 +68,44 @@ func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToText, error) 
 
 	return &response, nil
 }
+
+// SpeechToTextTranslate represents the result of a speech-to-text-translate operation.
+type SpeechToTextTranslate struct {
+	RequestId          string              `json:"request_id"`
+	Transcript         string              `json:"transcript"`
+	LanguageCode       string              `json:"language_code"`
+	DiarizedTranscript *DiarizedTranscript `json:"diarized_transcript,omitempty"`
+}
+
+func (s *SpeechToTextTranslate) String() string {
+	return s.Transcript
+}
+
+// SpeechToTextTranslateParams contains parameters for speech-to-text-translate conversion
+type SpeechToTextTranslateParams struct {
+	FilePath string  // Required: Path to the audio file
+	Prompt   *string // Optional: Conversation context to boost model accuracy
+	Model    *Model  // Optional: Model to use for speech-to-text conversion
+}
+
+// SpeechToTextTranslate automatically detects the input language, transcribes the speech, and translates the text to English.
+func (c *Client) SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTranslate, error) {
+	resp, err := c.makeMultipartRequestTranslate("/speech-to-text-translate", params.FilePath, params.Prompt, params.Model)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// Check for HTTP errors
+	if resp.StatusCode != http.StatusOK {
+		return nil, parseAPIError(resp)
+	}
+
+	// Parse the response
+	var response SpeechToTextTranslate
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return &response, nil
+}

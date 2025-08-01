@@ -105,6 +105,55 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model, l
 	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
 }
 
+// makeMultipartRequestTranslate makes a multipart request to the speech-to-text-translate API.
+func (c *Client) makeMultipartRequestTranslate(endpoint, filePath string, prompt *string, model *Model) (*http.Response, error) {
+	// Open the file
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	// Create a buffer to store the multipart form data
+	var requestBody bytes.Buffer
+	writer := multipart.NewWriter(&requestBody)
+	// Create a form file field
+	part, err := writer.CreateFormFile("file", file.Name())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create form file: %w", err)
+	}
+
+	// Copy the file content to the form field
+	_, err = io.Copy(part, file)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy file content: %w", err)
+	}
+
+	// Add prompt parameter if provided
+	if prompt != nil {
+		err = writer.WriteField("prompt", *prompt)
+		if err != nil {
+			return nil, fmt.Errorf("failed to write prompt field: %w", err)
+		}
+	}
+
+	// Add model parameter if provided
+	if model != nil {
+		err = writer.WriteField("model", string(*model))
+		if err != nil {
+			return nil, fmt.Errorf("failed to write model field: %w", err)
+		}
+	}
+
+	// Close the multipart writer
+	err = writer.Close()
+	if err != nil {
+		return nil, fmt.Errorf("failed to close multipart writer: %w", err)
+	}
+
+	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
+}
+
 type HTTPError struct {
 	StatusCode int
 	Message    string
@@ -166,4 +215,8 @@ func Float64(f float64) *float64 {
 
 func Int(i int) *int {
 	return &i
+}
+
+func String(s string) *string {
+	return &s
 }

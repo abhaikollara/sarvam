@@ -13,8 +13,8 @@ An unofficial Go SDK for the [Sarvam AI](https://sarvam.ai) APIs, providing easy
 - [x] Text-to-Speech
 - [x] Chat Completions
 - [x] Transliteration
-- [ ] Speech to text
-- [ ] Speech to text translation
+- [x] Speech to text
+- [x] Speech to text translation
 
 
 ## 🚀 Quick Start
@@ -33,6 +33,7 @@ Check out the [examples](./examples) directory for complete working examples:
 - [Text Translation](./examples/text/translate.go)
 - [Text-to-Speech](./examples/texttospeech/main.go)
 - [Chat Completions](./examples/chatcompletions/chatcompletion.go)
+- [Speech-to-Text](./examples/speechtotext/main.go)
 
 
 ## 🤝 Contributing
