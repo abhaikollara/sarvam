@@ -15,7 +15,7 @@ func main() {
 	response, err := client.ChatCompletion(&sarvam.ChatCompletionRequest{
 		Model: sarvam.ChatCompletionModelSarvamM,
 		Messages: []sarvam.Message{
-			{Role: "user", Content: "namaskaaram"},
+			{Role: "user", Content: "ഹലോ, നിങ്ങൾക്ക് സുഖമാണോ"},
 		},
 	})
 	if err != nil {
