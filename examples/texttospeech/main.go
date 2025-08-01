@@ -15,6 +15,7 @@ func main() {
 		Text:           "नमस्ते, आप कैसे हैं?",
 		Speaker:        &sarvam.SpeakerAnushka,
 		TargetLanguage: sarvam.LanguageHindi,
+		Model:          &sarvam.TextToSpeechModelBulbulV2,
 	})
 	if err != nil {
 		log.Fatalf("Error: %v", err)

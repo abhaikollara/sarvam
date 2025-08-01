@@ -28,7 +28,7 @@ type TextToSpeechParams struct {
 	Loudness            *float64
 	SpeechSampleRate    *SpeechSampleRate
 	EnablePreprocessing *bool
-	Model               *Model
+	Model               *TextToSpeechModel
 }
 
 type SpeechSampleRate int

@@ -41,10 +41,10 @@ func (s *SpeechToText) String() string {
 
 // SpeechToTextParams contains parameters for speech-to-text conversion
 type SpeechToTextParams struct {
-	FilePath       string  // Required: Path to the audio file
-	Model          *Model  // Optional: Model to use (default: saarika:v2.5)
-	LanguageCode   *string // Optional: Language code for the input audio
-	WithTimestamps *bool   // Optional: Whether to include timestamps in response
+	FilePath       string             // Required: Path to the audio file
+	Model          *SpeechToTextModel // Optional: Model to use (default: saarika:v2.5)
+	LanguageCode   *string            // Optional: Language code for the input audio
+	WithTimestamps *bool              // Optional: Whether to include timestamps in response
 }
 
 // SpeechToText converts speech from an audio file to text.
@@ -83,9 +83,9 @@ func (s *SpeechToTextTranslate) String() string {
 
 // SpeechToTextTranslateParams contains parameters for speech-to-text-translate conversion
 type SpeechToTextTranslateParams struct {
-	FilePath string  // Required: Path to the audio file
-	Prompt   *string // Optional: Conversation context to boost model accuracy
-	Model    *Model  // Optional: Model to use for speech-to-text conversion
+	FilePath string                      // Required: Path to the audio file
+	Prompt   *string                     // Optional: Conversation context to boost model accuracy
+	Model    *SpeechToTextTranslateModel // Optional: Model to use for speech-to-text conversion
 }
 
 // SpeechToTextTranslate automatically detects the input language, transcribes the speech, and translates the text to English.

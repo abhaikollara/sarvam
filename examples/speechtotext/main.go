@@ -22,7 +22,7 @@ func main() {
 	fmt.Println("=== Speech-to-Text Example ===")
 	params := sarvam.SpeechToTextParams{
 		FilePath: "path/to/your/audio.wav",
-		Model:    &sarvam.ModelSaarikaV2dot5,
+		Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
 	}
 
 	result, err := client.SpeechToText(params)
@@ -38,7 +38,7 @@ func main() {
 	fmt.Println("\n=== Speech-to-Text with Timestamps ===")
 	paramsWithTimestamps := sarvam.SpeechToTextParams{
 		FilePath:       "path/to/your/audio.wav",
-		Model:          &sarvam.ModelSaarikaV2dot5,
+		Model:          &sarvam.SpeechToTextModelSaarikaV2dot5,
 		WithTimestamps: sarvam.Bool(true),
 	}
 
@@ -57,7 +57,7 @@ func main() {
 	fmt.Println("\n=== Speech-to-Text Translate Example ===")
 	translateParams := sarvam.SpeechToTextTranslateParams{
 		FilePath: "path/to/your/audio.wav",
-		Model:    &sarvam.ModelSaarasV2dot5,
+		Model:    &sarvam.SpeechToTextTranslateModelSaarasV2dot5,
 		Prompt:   sarvam.String("This is a conversation about technology"),
 	}
 

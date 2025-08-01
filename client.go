@@ -49,7 +49,7 @@ func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer, content
 
 // makeMultipartRequest makes a multipart request to the API.
 // but this either does not belong here or should be a more generic function
-func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model, languageCode *string, withTimestamps *bool) (*http.Response, error) {
+func (c *Client) makeMultipartRequest(endpoint, filePath string, model *SpeechToTextModel, languageCode *string, withTimestamps *bool) (*http.Response, error) {
 	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -106,7 +106,7 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model, l
 }
 
 // makeMultipartRequestTranslate makes a multipart request to the speech-to-text-translate API.
-func (c *Client) makeMultipartRequestTranslate(endpoint, filePath string, prompt *string, model *Model) (*http.Response, error) {
+func (c *Client) makeMultipartRequestTranslate(endpoint, filePath string, prompt *string, model *SpeechToTextTranslateModel) (*http.Response, error) {
 	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {

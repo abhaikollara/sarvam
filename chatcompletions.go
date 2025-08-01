@@ -23,19 +23,19 @@ const (
 
 // ChatCompletionRequest represents the request payload for chat completions
 type ChatCompletionRequest struct {
-	Messages         []Message        `json:"messages"`
-	Model            Model            `json:"model"`
-	Temperature      *float64         `json:"temperature,omitempty"`
-	TopP             *float64         `json:"top_p,omitempty"`
-	ReasoningEffort  *ReasoningEffort `json:"reasoning_effort,omitempty"`
-	MaxTokens        *int             `json:"max_tokens,omitempty"`
-	Stream           *bool            `json:"stream,omitempty"`
-	Stop             interface{}      `json:"stop,omitempty"` // string or []string
-	N                *int             `json:"n,omitempty"`
-	Seed             *int64           `json:"seed,omitempty"`
-	FrequencyPenalty *float64         `json:"frequency_penalty,omitempty"`
-	PresencePenalty  *float64         `json:"presence_penalty,omitempty"`
-	WikiGrounding    *bool            `json:"wiki_grounding,omitempty"`
+	Messages         []Message           `json:"messages"`
+	Model            ChatCompletionModel `json:"model"`
+	Temperature      *float64            `json:"temperature,omitempty"`
+	TopP             *float64            `json:"top_p,omitempty"`
+	ReasoningEffort  *ReasoningEffort    `json:"reasoning_effort,omitempty"`
+	MaxTokens        *int                `json:"max_tokens,omitempty"`
+	Stream           *bool               `json:"stream,omitempty"`
+	Stop             interface{}         `json:"stop,omitempty"` // string or []string
+	N                *int                `json:"n,omitempty"`
+	Seed             *int64              `json:"seed,omitempty"`
+	FrequencyPenalty *float64            `json:"frequency_penalty,omitempty"`
+	PresencePenalty  *float64            `json:"presence_penalty,omitempty"`
+	WikiGrounding    *bool               `json:"wiki_grounding,omitempty"`
 }
 
 // ChatCompletionChoice represents a single completion choice
@@ -95,7 +95,7 @@ func (c *Client) ChatCompletion(req *ChatCompletionRequest) (*ChatCompletionResp
 }
 
 // SimpleChatCompletion is a convenience function for simple chat completions
-func (c *Client) SimpleChatCompletion(messages []Message, model Model) (*ChatCompletionResponse, error) {
+func (c *Client) SimpleChatCompletion(messages []Message, model ChatCompletionModel) (*ChatCompletionResponse, error) {
 	req := &ChatCompletionRequest{
 		Messages: messages,
 		Model:    model,
@@ -104,7 +104,7 @@ func (c *Client) SimpleChatCompletion(messages []Message, model Model) (*ChatCom
 }
 
 // ChatCompletionWithOptions creates a chat completion with custom options
-func (c *Client) ChatCompletionWithOptions(messages []Message, model Model, options map[string]interface{}) (*ChatCompletionResponse, error) {
+func (c *Client) ChatCompletionWithOptions(messages []Message, model ChatCompletionModel, options map[string]interface{}) (*ChatCompletionResponse, error) {
 	req := &ChatCompletionRequest{
 		Messages: messages,
 		Model:    model,

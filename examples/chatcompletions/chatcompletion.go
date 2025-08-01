@@ -13,7 +13,7 @@ func main() {
 	client := sarvam.NewClient(apiKey)
 
 	response, err := client.ChatCompletion(&sarvam.ChatCompletionRequest{
-		Model: sarvam.ModelSarvamM,
+		Model: sarvam.ChatCompletionModelSarvamM,
 		Messages: []sarvam.Message{
 			{Role: "user", Content: "namaskaaram"},
 		},

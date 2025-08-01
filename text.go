@@ -24,14 +24,6 @@ const (
 	TranslationModeCodeMixed         TranslationMode = "code-mixed"
 )
 
-// TranslationModel specifies the translation model to use.
-type TranslationModel string
-
-const (
-	TranslationModelMayuraV1        TranslationModel = "mayura:v1"
-	TranslationModelSarvamTranslate TranslationModel = "sarvam-translate:v1"
-)
-
 // OutputScript controls the transliteration style applied to the output text.
 type OutputScript string
 
