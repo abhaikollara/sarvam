@@ -31,18 +31,18 @@ func (c *Client) makeJsonHTTPRequest(method, url string, body any) (*http.Respon
 	}
 
 	bodyBytes := bytes.NewBuffer(jsonBody)
-	return c.makeHTTPRequest(method, url, bodyBytes)
+	return c.makeHTTPRequest(method, url, bodyBytes, "application/json")
 
 }
 
-func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer) (*http.Response, error) {
+func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer, contentType string) (*http.Response, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
 
+	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("api-subscription-key", c.apiKey)
-	req.Header.Set("Content-Type", "application/json")
 
 	return http.DefaultClient.Do(req)
 }
@@ -86,7 +86,7 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *Model) (
 		return nil, fmt.Errorf("failed to close multipart writer: %w", err)
 	}
 
-	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody)
+	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
 }
 
 type HTTPError struct {

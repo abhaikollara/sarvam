@@ -17,7 +17,7 @@ func main() {
 
 	response, err := client.SpeechToText(sarvam.SpeechToTextParams{
 		FilePath: filepath,
-		Model:    &sarvam.ModelSarvamM, // Optional: specify a model
+		Model:    &sarvam.ModelSaarikaV2, // Optional: specify a model
 	})
 	if err != nil {
 		log.Fatalf("Error: %v", err)
