@@ -49,16 +49,6 @@ const (
 	NumeralsFormatNative        NumeralsFormat = "native"
 )
 
-// TranslateOptions contains all optional parameters for translation.
-type TranslateOptions struct {
-	SpeakerGender       *SpeakerGender
-	Mode                *TranslationMode
-	Model               *TranslationModel
-	EnablePreprocessing *bool
-	OutputScript        *OutputScript
-	NumeralsFormat      *NumeralsFormat
-}
-
 // Translation represents the result of a translation operation.
 type Translation struct {
 	RequestId      string
@@ -77,15 +67,28 @@ func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode 
 	return c.TranslateWithOptions(input, sourceLanguageCode, targetLanguageCode, nil)
 }
 
+// TranslateParams contains all optional parameters for translation.
+type TranslateParams struct {
+	Input               string
+	SourceLanguage      Language
+	TargetLanguage      Language
+	SpeakerGender       *SpeakerGender
+	Mode                *TranslationMode
+	Model               *TranslationModel
+	EnablePreprocessing *bool
+	OutputScript        *OutputScript
+	NumeralsFormat      *NumeralsFormat
+}
+
 // TranslateWithOptions converts text from one language to another with custom options.
-func (c *Client) TranslateWithOptions(input string, sourceLanguageCode, targetLanguageCode Language, options *TranslateOptions) (*Translation, error) {
+func (c *Client) TranslateWithOptions(params *TranslateParams) (*Translation, error) {
 	// Validate input length based on model
 	maxLength := 2000 // Default for sarvam-translate:v1
-	if options != nil && options.Model != nil && *options.Model == TranslationModelMayuraV1 {
+	if params != nil && params.Model != nil && *params.Model == TranslationModelMayuraV1 {
 		maxLength = 1000
 	}
 
-	if l := len(input); l > maxLength {
+	if l := len(params.Input); l > maxLength {
 		return nil, &ErrInputTooLong{
 			InputLength: l,
 			MaxLength:   maxLength,
@@ -93,30 +96,30 @@ func (c *Client) TranslateWithOptions(input string, sourceLanguageCode, targetLa
 	}
 
 	var reqBody = map[string]any{
-		"input":                input,
-		"source_language_code": sourceLanguageCode,
-		"target_language_code": targetLanguageCode,
+		"input":                params.Input,
+		"source_language_code": params.SourceLanguage,
+		"target_language_code": params.TargetLanguage,
 	}
 
 	// Add optional parameters if provided
-	if options != nil {
-		if options.SpeakerGender != nil {
-			reqBody["speaker_gender"] = *options.SpeakerGender
+	if params != nil {
+		if params.SpeakerGender != nil {
+			reqBody["speaker_gender"] = *params.SpeakerGender
 		}
-		if options.Mode != nil {
-			reqBody["mode"] = *options.Mode
+		if params.Mode != nil {
+			reqBody["mode"] = *params.Mode
 		}
-		if options.Model != nil {
-			reqBody["model"] = *options.Model
+		if params.Model != nil {
+			reqBody["model"] = *params.Model
 		}
-		if options.EnablePreprocessing != nil {
-			reqBody["enable_preprocessing"] = *options.EnablePreprocessing
+		if params.EnablePreprocessing != nil {
+			reqBody["enable_preprocessing"] = *params.EnablePreprocessing
 		}
-		if options.OutputScript != nil {
-			reqBody["output_script"] = *options.OutputScript
+		if params.OutputScript != nil {
+			reqBody["output_script"] = *params.OutputScript
 		}
-		if options.NumeralsFormat != nil {
-			reqBody["numerals_format"] = *options.NumeralsFormat
+		if params.NumeralsFormat != nil {
+			reqBody["numerals_format"] = *params.NumeralsFormat
 		}
 	}
 
@@ -207,6 +210,7 @@ func (c *Client) Transliterate(input string, sourceLanguage Language, targetLang
 	if l := len(input); l >= 1000 {
 		return nil, &ErrInputTooLong{
 			InputLength: l,
+			MaxLength:   1000,
 		}
 	}
 
@@ -215,6 +219,7 @@ func (c *Client) Transliterate(input string, sourceLanguage Language, targetLang
 		"source_language_code": sourceLanguage,
 		"target_language_code": targetLanguage,
 	}
+
 	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/transliterate", payload)
 	if err != nil {
 		return nil, err
