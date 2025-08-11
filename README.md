@@ -6,6 +6,8 @@
 
 An unofficial Go SDK for the [Sarvam AI](https://sarvam.ai) APIs, providing easy access to Indian language AI services including translation, text-to-speech, chat completions, and language identification.
 
+> **⚠️ Breaking Changes Notice**: This SDK is currently in pre-v1 development. Breaking changes may occur until v1.0.0 is released. Please pin your dependency version if you need stability in production environments.
+
 ## 🌟 API Parity (wip)
 
 - [x] Text Translation
