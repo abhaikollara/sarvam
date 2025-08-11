@@ -18,7 +18,7 @@ func main() {
 	fmt.Println("=== Using Package-Level Functions ===")
 	sarvam.SetAPIKey(apiKey)
 
-	response, err := sarvam.ChatCompletionDefault(&sarvam.ChatCompletionRequest{
+	response, err := sarvam.ChatCompletion(&sarvam.ChatCompletionRequest{
 		Model: sarvam.ChatCompletionModelSarvamM,
 		Messages: []sarvam.Message{
 			{Role: "user", Content: "ഹലോ, നിങ്ങൾക്ക് സുഖമാണോ"},

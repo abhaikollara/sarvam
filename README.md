@@ -50,7 +50,7 @@ func main() {
     sarvam.SetAPIKey("your-api-key-here")
     
     // Use package-level functions directly
-    result, err := sarvam.SpeechToTextDefault(sarvam.SpeechToTextParams{
+    result, err := sarvam.SpeechToText(sarvam.SpeechToTextParams{
         FilePath: "audio.wav",
         Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
     })
@@ -106,18 +106,20 @@ The SDK will automatically pick up this environment variable on initialization.
 The SDK provides the following package-level functions that use the default client:
 
 #### Speech & Audio
-- `sarvam.SpeechToTextDefault(params)` - Convert speech to text
-- `sarvam.SpeechToTextTranslateDefault(params)` - Convert speech to text with translation to English
-- `sarvam.TextToSpeechDefault(params)` - Convert text to speech
+- `sarvam.SpeechToText(params)` - Convert speech to text
+- `sarvam.SpeechToTextTranslate(params)` - Convert speech to text with translation to English
+- `sarvam.TextToSpeech(params)` - Convert text to speech
 
 #### Chat & AI
-- `sarvam.ChatCompletionDefault(request)` - Generate chat completions
+- `sarvam.ChatCompletion(request)` - Generate chat completions
+- `sarvam.SimpleChatCompletion(messages, model)` - Generate chat completions with simplified parameters
+- `sarvam.ChatCompletionWithOptions(messages, model, options)` - Generate chat completions with custom options
 
 #### Translation & Language
-- `sarvam.TranslateDefault(input, sourceLang, targetLang)` - Translate text between languages
-- `sarvam.TranslateWithOptionsDefault(params)` - Translate text with advanced options
-- `sarvam.IdentifyLanguageDefault(input)` - Identify the language of input text
-- `sarvam.TransliterateDefault(input, sourceLang, targetLang)` - Convert text between scripts
+- `sarvam.Translate(input, sourceLang, targetLang)` - Translate text between languages
+- `sarvam.TranslateWithOptions(params)` - Translate text with advanced options
+- `sarvam.IdentifyLanguage(input)` - Identify the language of input text
+- `sarvam.Transliterate(input, sourceLang, targetLang)` - Convert text between scripts
 
 #### Utility Functions
 - `sarvam.SetAPIKey(key)` - Set the API key for the default client

@@ -27,7 +27,7 @@ func main() {
 	sarvam.SetAPIKey(apiKey)
 
 	// Basic speech-to-text using package-level function
-	result, err := sarvam.SpeechToTextDefault(sarvam.SpeechToTextParams{
+	result, err := sarvam.SpeechToText(sarvam.SpeechToTextParams{
 		FilePath: filepath,
 		Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
 	})
@@ -40,7 +40,7 @@ func main() {
 	fmt.Printf("Language Code: %s\n", result.LanguageCode)
 
 	// Speech-to-text-translate using package-level function
-	translateResult, err := sarvam.SpeechToTextTranslateDefault(sarvam.SpeechToTextTranslateParams{
+	translateResult, err := sarvam.SpeechToTextTranslate(sarvam.SpeechToTextTranslateParams{
 		FilePath: filepath,
 		Model:    &sarvam.SpeechToTextTranslateModelSaarasV2dot5,
 		Prompt:   sarvam.String("This is a conversation is a greeting"),

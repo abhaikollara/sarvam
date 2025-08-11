@@ -26,8 +26,8 @@ type DiarizedTranscript struct {
 	Entries []DiarizedEntry `json:"entries"`
 }
 
-// SpeechToText represents the result of a speech-to-text operation.
-type SpeechToText struct {
+// SpeechToTextResponse represents the result of a speech-to-text operation.
+type SpeechToTextResponse struct {
 	RequestId          string              `json:"request_id"`
 	Transcript         string              `json:"transcript"`
 	Timestamps         *Timestamps         `json:"timestamps,omitempty"`
@@ -36,7 +36,7 @@ type SpeechToText struct {
 }
 
 // String returns the transcribed text.
-func (s *SpeechToText) String() string {
+func (s *SpeechToTextResponse) String() string {
 	return s.Transcript
 }
 
@@ -49,7 +49,7 @@ type SpeechToTextParams struct {
 }
 
 // SpeechToText converts speech from an audio file to text.
-func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToText, error) {
+func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToTextResponse, error) {
 	// Convert *Language to *string for the API call
 	var languageCodeStr *string
 	if params.LanguageCode != nil {
@@ -82,7 +82,7 @@ func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToText, error) 
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	return &SpeechToText{
+	return &SpeechToTextResponse{
 		RequestId:          response.RequestId,
 		Transcript:         response.Transcript,
 		Timestamps:         response.Timestamps,
@@ -91,8 +91,8 @@ func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToText, error) 
 	}, nil
 }
 
-// SpeechToTextTranslate represents the result of a speech-to-text-translate operation.
-type SpeechToTextTranslate struct {
+// SpeechToTextTranslateResponse represents the result of a speech-to-text-translate operation.
+type SpeechToTextTranslateResponse struct {
 	RequestId          string              `json:"request_id"`
 	Transcript         string              `json:"transcript"`
 	LanguageCode       Language            `json:"language_code"`
@@ -100,7 +100,7 @@ type SpeechToTextTranslate struct {
 }
 
 // String returns the transcribed and translated text.
-func (s *SpeechToTextTranslate) String() string {
+func (s *SpeechToTextTranslateResponse) String() string {
 	return s.Transcript
 }
 
@@ -112,7 +112,7 @@ type SpeechToTextTranslateParams struct {
 }
 
 // SpeechToTextTranslate automatically detects the input language, transcribes the speech, and translates the text to English.
-func (c *Client) SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTranslate, error) {
+func (c *Client) SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
 	resp, err := c.makeMultipartRequestTranslate("/speech-to-text-translate", params.FilePath, params.Prompt, params.Model)
 	if err != nil {
 		return nil, err
@@ -137,7 +137,7 @@ func (c *Client) SpeechToTextTranslate(params SpeechToTextTranslateParams) (*Spe
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	return &SpeechToTextTranslate{
+	return &SpeechToTextTranslateResponse{
 		RequestId:          response.RequestId,
 		Transcript:         response.Transcript,
 		LanguageCode:       mapLanguageCodeToLanguage(response.LanguageCode),

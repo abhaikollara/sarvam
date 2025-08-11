@@ -254,64 +254,80 @@ func GetDefaultClient() *Client {
 
 // Package-level convenience functions that use the default client
 
-// SpeechToTextDefault is a package-level function that uses the default client
-func SpeechToTextDefault(params SpeechToTextParams) (*SpeechToText, error) {
+// SpeechToText is a package-level function that uses the default client
+func SpeechToText(params SpeechToTextParams) (*SpeechToTextResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
 	return defaultClient.SpeechToText(params)
 }
 
-// SpeechToTextTranslateDefault is a package-level function that uses the default client
-func SpeechToTextTranslateDefault(params SpeechToTextTranslateParams) (*SpeechToTextTranslate, error) {
+// SpeechToTextTranslate is a package-level function that uses the default client
+func SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
 	return defaultClient.SpeechToTextTranslate(params)
 }
 
-// ChatCompletionDefault is a package-level function that uses the default client
-func ChatCompletionDefault(req *ChatCompletionRequest) (*ChatCompletionResponse, error) {
+// ChatCompletion is a package-level function that uses the default client
+func ChatCompletion(req *ChatCompletionRequest) (*ChatCompletionResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
 	return defaultClient.ChatCompletion(req)
 }
 
-// TranslateDefault is a package-level function that uses the default client
-func TranslateDefault(input string, sourceLanguageCode, targetLanguageCode Language) (*Translation, error) {
+// SimpleChatCompletion is a package-level function that uses the default client
+func SimpleChatCompletion(messages []Message, model ChatCompletionModel) (*ChatCompletionResponse, error) {
+	if defaultClient == nil {
+		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+	}
+	return defaultClient.SimpleChatCompletion(messages, model)
+}
+
+// ChatCompletionWithOptions is a package-level function that uses the default client
+func ChatCompletionWithOptions(messages []Message, model ChatCompletionModel, options map[string]interface{}) (*ChatCompletionResponse, error) {
+	if defaultClient == nil {
+		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+	}
+	return defaultClient.ChatCompletionWithOptions(messages, model, options)
+}
+
+// Translate is a package-level function that uses the default client
+func Translate(input string, sourceLanguageCode, targetLanguageCode Language) (*Translation, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
 	return defaultClient.Translate(input, sourceLanguageCode, targetLanguageCode)
 }
 
-// TranslateWithOptionsDefault is a package-level function that uses the default client
-func TranslateWithOptionsDefault(params *TranslateParams) (*Translation, error) {
+// TranslateWithOptions is a package-level function that uses the default client
+func TranslateWithOptions(params *TranslateParams) (*Translation, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
 	return defaultClient.TranslateWithOptions(params)
 }
 
-// IdentifyLanguageDefault is a package-level function that uses the default client
-func IdentifyLanguageDefault(input string) (*LanguageIdentification, error) {
+// IdentifyLanguage is a package-level function that uses the default client
+func IdentifyLanguage(input string) (*LanguageIdentification, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
 	return defaultClient.IdentifyLanguage(input)
 }
 
-// TransliterateDefault is a package-level function that uses the default client
-func TransliterateDefault(input string, sourceLanguage Language, targetLanguage Language) (*Transliteration, error) {
+// Transliterate is a package-level function that uses the default client
+func Transliterate(input string, sourceLanguage Language, targetLanguage Language) (*Transliteration, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
 	return defaultClient.Transliterate(input, sourceLanguage, targetLanguage)
 }
 
-// TextToSpeechDefault is a package-level function that uses the default client
-func TextToSpeechDefault(params TextToSpeechParams) (*TextToSpeech, error) {
+// TextToSpeech is a package-level function that uses the default client
+func TextToSpeech(params TextToSpeechParams) (*TextToSpeechResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}

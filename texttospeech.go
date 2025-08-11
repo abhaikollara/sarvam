@@ -7,15 +7,15 @@ import (
 	"os"
 )
 
-// TextToSpeech represents the result of a text-to-speech operation.
-type TextToSpeech struct {
+// TextToSpeechResponse represents the result of a text-to-speech operation.
+type TextToSpeechResponse struct {
 	RequestId string
 	Audios    []string
 	Data      []byte
 }
 
 // Save saves the text-to-speech data as a WAV file.
-func (t *TextToSpeech) Save(filename string) error {
+func (t *TextToSpeechResponse) Save(filename string) error {
 	return os.WriteFile(filename+".wav", t.Data, 0644)
 }
 
@@ -43,7 +43,7 @@ var (
 )
 
 // TextToSpeech converts text to speech in the specified language.
-func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeech, error) {
+func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeechResponse, error) {
 	var payload = map[string]any{
 		"text":                 params.Text,
 		"target_language_code": params.TargetLanguage,
@@ -95,7 +95,7 @@ func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeech, error) 
 	if err != nil {
 		return nil, err
 	}
-	return &TextToSpeech{
+	return &TextToSpeechResponse{
 		RequestId: response.RequestId,
 		Audios:    response.Audios,
 		Data:      data,
