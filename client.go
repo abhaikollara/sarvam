@@ -271,7 +271,7 @@ func SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTra
 }
 
 // ChatCompletion is a package-level function that uses the default client
-func ChatCompletion(req *ChatCompletionRequest) (*ChatCompletionResponse, error) {
+func ChatCompletion(req *ChatCompletionParams) (*ChatCompletionResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
@@ -286,12 +286,12 @@ func SimpleChatCompletion(messages []Message, model ChatCompletionModel) (*ChatC
 	return defaultClient.SimpleChatCompletion(messages, model)
 }
 
-// ChatCompletionWithOptions is a package-level function that uses the default client
-func ChatCompletionWithOptions(params ChatCompletionWithOptionsParams) (*ChatCompletionResponse, error) {
+// ChatCompletionWithParams is a package-level function that uses the default client
+func ChatCompletionWithParams(params *ChatCompletionParams) (*ChatCompletionResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
-	return defaultClient.ChatCompletionWithOptions(params)
+	return defaultClient.ChatCompletionWithParams(params)
 }
 
 // Translate is a package-level function that uses the default client
@@ -302,12 +302,12 @@ func Translate(input string, sourceLanguageCode, targetLanguageCode Language) (*
 	return defaultClient.Translate(input, sourceLanguageCode, targetLanguageCode)
 }
 
-// TranslateWithOptions is a package-level function that uses the default client
-func TranslateWithOptions(params *TranslateParams) (*Translation, error) {
+// TranslateWithParams is a package-level function that uses the default client
+func TranslateWithParams(params *TranslateParams) (*Translation, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
-	return defaultClient.TranslateWithOptions(params)
+	return defaultClient.TranslateWithParams(params)
 }
 
 // IdentifyLanguage is a package-level function that uses the default client

@@ -63,9 +63,9 @@ func (t *Translation) String() string {
 }
 
 // Translate converts text from one language to another while preserving its meaning.
-// This is the simple version that uses default options.
+// This is the simple version that uses default parameters.
 func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode Language) (*Translation, error) {
-	return c.TranslateWithOptions(&TranslateParams{
+	return c.TranslateWithParams(&TranslateParams{
 		Input:          input,
 		SourceLanguage: sourceLanguageCode,
 		TargetLanguage: targetLanguageCode,
@@ -85,8 +85,8 @@ type TranslateParams struct {
 	NumeralsFormat      *NumeralsFormat
 }
 
-// TranslateWithOptions converts text from one language to another with custom options.
-func (c *Client) TranslateWithOptions(params *TranslateParams) (*Translation, error) {
+// TranslateWithParams converts text from one language to another with custom parameters.
+func (c *Client) TranslateWithParams(params *TranslateParams) (*Translation, error) {
 	// Validate input length based on model
 	maxLength := 2000 // Default for sarvam-translate:v1
 	if params != nil && params.Model != nil && *params.Model == TranslationModelMayuraV1 {

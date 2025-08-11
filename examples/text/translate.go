@@ -20,7 +20,7 @@ func main() {
 
 	fmt.Printf("Basic Translation: %s\n", response)
 
-	// Advanced translation with options
+	// Advanced translation with parameters
 	speakerGender := sarvam.SpeakerGenderMale
 	mode := sarvam.TranslationModeModernColloquial
 	model := sarvam.TranslationModelMayuraV1
@@ -40,7 +40,7 @@ func main() {
 		NumeralsFormat:      &numeralsFormat,
 	}
 
-	advancedResponse, err := client.TranslateWithOptions(params)
+	advancedResponse, err := client.TranslateWithParams(params)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
@@ -61,7 +61,7 @@ func main() {
 		EnablePreprocessing: &sarvamPreprocessing,
 	}
 
-	sarvamResponse, err := client.TranslateWithOptions(sarvamParams)
+	sarvamResponse, err := client.TranslateWithParams(sarvamParams)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}

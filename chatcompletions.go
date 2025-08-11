@@ -21,8 +21,8 @@ const (
 	ReasoningEffortHigh   ReasoningEffort = "high"
 )
 
-// ChatCompletionRequest represents the request payload for chat completions.
-type ChatCompletionRequest struct {
+// ChatCompletionParams represents the parameters for chat completions.
+type ChatCompletionParams struct {
 	Messages         []Message           `json:"messages"`
 	Model            ChatCompletionModel `json:"model"`
 	Temperature      *float64            `json:"temperature,omitempty"`
@@ -63,7 +63,7 @@ type ChatCompletionResponse struct {
 }
 
 // ChatCompletion creates a chat completion using the Sarvam AI API.
-func (c *Client) ChatCompletion(req *ChatCompletionRequest) (*ChatCompletionResponse, error) {
+func (c *Client) ChatCompletion(req *ChatCompletionParams) (*ChatCompletionResponse, error) {
 	if req == nil {
 		return nil, fmt.Errorf("request cannot be nil")
 	}
@@ -96,49 +96,16 @@ func (c *Client) ChatCompletion(req *ChatCompletionRequest) (*ChatCompletionResp
 
 // SimpleChatCompletion is a convenience function for simple chat completions.
 func (c *Client) SimpleChatCompletion(messages []Message, model ChatCompletionModel) (*ChatCompletionResponse, error) {
-	req := &ChatCompletionRequest{
+	req := &ChatCompletionParams{
 		Messages: messages,
 		Model:    model,
 	}
 	return c.ChatCompletion(req)
 }
 
-// ChatCompletionWithOptionsParams contains parameters for chat completion with custom options.
-type ChatCompletionWithOptionsParams struct {
-	Messages         []Message           `json:"messages"`
-	Model            ChatCompletionModel `json:"model"`
-	Temperature      *float64            `json:"temperature,omitempty"`
-	TopP             *float64            `json:"top_p,omitempty"`
-	ReasoningEffort  *ReasoningEffort    `json:"reasoning_effort,omitempty"`
-	MaxTokens        *int                `json:"max_tokens,omitempty"`
-	Stream           *bool               `json:"stream,omitempty"`
-	Stop             interface{}         `json:"stop,omitempty"` // string or []string
-	N                *int                `json:"n,omitempty"`
-	Seed             *int64              `json:"seed,omitempty"`
-	FrequencyPenalty *float64            `json:"frequency_penalty,omitempty"`
-	PresencePenalty  *float64            `json:"presence_penalty,omitempty"`
-	WikiGrounding    *bool               `json:"wiki_grounding,omitempty"`
-}
-
-// ChatCompletionWithOptions creates a chat completion with custom options.
-func (c *Client) ChatCompletionWithOptions(params ChatCompletionWithOptionsParams) (*ChatCompletionResponse, error) {
-	req := &ChatCompletionRequest{
-		Messages:         params.Messages,
-		Model:            params.Model,
-		Temperature:      params.Temperature,
-		TopP:             params.TopP,
-		ReasoningEffort:  params.ReasoningEffort,
-		MaxTokens:        params.MaxTokens,
-		Stream:           params.Stream,
-		Stop:             params.Stop,
-		N:                params.N,
-		Seed:             params.Seed,
-		FrequencyPenalty: params.FrequencyPenalty,
-		PresencePenalty:  params.PresencePenalty,
-		WikiGrounding:    params.WikiGrounding,
-	}
-
-	return c.ChatCompletion(req)
+// ChatCompletionWithParams creates a chat completion with custom parameters.
+func (c *Client) ChatCompletionWithParams(params *ChatCompletionParams) (*ChatCompletionResponse, error) {
+	return c.ChatCompletion(params)
 }
 
 // GetFirstChoiceContent returns the content of the first choice from the response.

@@ -18,7 +18,7 @@ func main() {
 	fmt.Println("=== Using Package-Level Functions ===")
 	sarvam.SetAPIKey(apiKey)
 
-	response, err := sarvam.ChatCompletion(&sarvam.ChatCompletionRequest{
+	response, err := sarvam.ChatCompletion(&sarvam.ChatCompletionParams{
 		Model: sarvam.ChatCompletionModelSarvamM,
 		Messages: []sarvam.Message{
 			{Role: "user", Content: "ഹലോ, നിങ്ങൾക്ക് സുഖമാണോ"},
@@ -34,7 +34,7 @@ func main() {
 	fmt.Println("\n=== Using Client Instance ===")
 	client := sarvam.NewClient(apiKey)
 
-	response2, err := client.ChatCompletion(&sarvam.ChatCompletionRequest{
+	response2, err := client.ChatCompletion(&sarvam.ChatCompletionParams{
 		Model: sarvam.ChatCompletionModelSarvamM,
 		Messages: []sarvam.Message{
 			{Role: "user", Content: "Hello, how are you?"},
@@ -46,11 +46,11 @@ func main() {
 
 	fmt.Println("Client instance response:", response2.Choices[0].Message.Content)
 
-	// Example 3: Using ChatCompletionWithOptions with proper params struct
-	fmt.Println("\n=== Using ChatCompletionWithOptions ===")
+	// Example 3: Using ChatCompletionWithParams with custom parameters
+	fmt.Println("\n=== Using ChatCompletionWithParams ===")
 
-	// Create params with custom options
-	optionsParams := sarvam.ChatCompletionWithOptionsParams{
+	// Create params with custom parameters
+	customParams := &sarvam.ChatCompletionParams{
 		Model: sarvam.ChatCompletionModelSarvamM,
 		Messages: []sarvam.Message{
 			{Role: "user", Content: "Explain quantum computing in simple terms"},
@@ -60,10 +60,10 @@ func main() {
 		TopP:        sarvam.Float64(0.9),
 	}
 
-	response3, err := sarvam.ChatCompletionWithOptions(optionsParams)
+	response3, err := sarvam.ChatCompletionWithParams(customParams)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 
-	fmt.Println("ChatCompletionWithOptions response:", response3.Choices[0].Message.Content)
+	fmt.Println("ChatCompletionWithParams response:", response3.Choices[0].Message.Content)
 }

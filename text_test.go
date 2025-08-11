@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestTranslateWithOptions(t *testing.T) {
+func TestTranslateWithParams(t *testing.T) {
 	client := NewClient("test-key")
 
 	// Test basic translation
@@ -13,7 +13,7 @@ func TestTranslateWithOptions(t *testing.T) {
 		t.Error("Expected error for invalid API key, got nil")
 	}
 
-	// Test translation with options
+	// Test translation with parameters
 	speakerGender := SpeakerGenderMale
 	mode := TranslationModeFormal
 	model := TranslationModelMayuraV1
@@ -33,7 +33,7 @@ func TestTranslateWithOptions(t *testing.T) {
 		NumeralsFormat:      &numeralsFormat,
 	}
 
-	_, err = client.TranslateWithOptions(options)
+	_, err = client.TranslateWithParams(options)
 	if err == nil {
 		t.Error("Expected error for invalid API key, got nil")
 	}
@@ -57,7 +57,7 @@ func TestTranslateInputLengthValidation(t *testing.T) {
 		Model:          &model,
 	}
 
-	_, err := client.TranslateWithOptions(options)
+	_, err := client.TranslateWithParams(options)
 	if err == nil {
 		t.Error("Expected error for input too long, got nil")
 	}
@@ -73,13 +73,13 @@ func TestTranslateInputLengthValidation(t *testing.T) {
 		Model:          &sarvamModel,
 	}
 
-	_, err = client.TranslateWithOptions(sarvamOptions)
+	_, err = client.TranslateWithParams(sarvamOptions)
 	if err == nil {
 		t.Error("Expected error for input too long, got nil")
 	}
 }
 
-func TestTranslateOptionsValidation(t *testing.T) {
+func TestTranslateParamsValidation(t *testing.T) {
 	// Test that all constants are properly defined
 	testCases := []struct {
 		name     string
