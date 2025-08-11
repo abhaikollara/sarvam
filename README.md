@@ -113,7 +113,7 @@ The SDK provides the following package-level functions that use the default clie
 #### Chat & AI
 - `sarvam.ChatCompletion(request)` - Generate chat completions
 - `sarvam.SimpleChatCompletion(messages, model)` - Generate chat completions with simplified parameters
-- `sarvam.ChatCompletionWithOptions(messages, model, options)` - Generate chat completions with custom options
+- `sarvam.ChatCompletionWithOptions(params)` - Generate chat completions with custom options
 
 #### Translation & Language
 - `sarvam.Translate(input, sourceLang, targetLang)` - Translate text between languages

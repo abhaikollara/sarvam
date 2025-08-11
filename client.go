@@ -287,11 +287,11 @@ func SimpleChatCompletion(messages []Message, model ChatCompletionModel) (*ChatC
 }
 
 // ChatCompletionWithOptions is a package-level function that uses the default client
-func ChatCompletionWithOptions(messages []Message, model ChatCompletionModel, options map[string]interface{}) (*ChatCompletionResponse, error) {
+func ChatCompletionWithOptions(params ChatCompletionWithOptionsParams) (*ChatCompletionResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
-	return defaultClient.ChatCompletionWithOptions(messages, model, options)
+	return defaultClient.ChatCompletionWithOptions(params)
 }
 
 // Translate is a package-level function that uses the default client

@@ -103,46 +103,39 @@ func (c *Client) SimpleChatCompletion(messages []Message, model ChatCompletionMo
 	return c.ChatCompletion(req)
 }
 
-// ChatCompletionWithOptions creates a chat completion with custom options.
-func (c *Client) ChatCompletionWithOptions(messages []Message, model ChatCompletionModel, options map[string]interface{}) (*ChatCompletionResponse, error) {
-	req := &ChatCompletionRequest{
-		Messages: messages,
-		Model:    model,
-	}
+// ChatCompletionWithOptionsParams contains parameters for chat completion with custom options.
+type ChatCompletionWithOptionsParams struct {
+	Messages         []Message           `json:"messages"`
+	Model            ChatCompletionModel `json:"model"`
+	Temperature      *float64            `json:"temperature,omitempty"`
+	TopP             *float64            `json:"top_p,omitempty"`
+	ReasoningEffort  *ReasoningEffort    `json:"reasoning_effort,omitempty"`
+	MaxTokens        *int                `json:"max_tokens,omitempty"`
+	Stream           *bool               `json:"stream,omitempty"`
+	Stop             interface{}         `json:"stop,omitempty"` // string or []string
+	N                *int                `json:"n,omitempty"`
+	Seed             *int64              `json:"seed,omitempty"`
+	FrequencyPenalty *float64            `json:"frequency_penalty,omitempty"`
+	PresencePenalty  *float64            `json:"presence_penalty,omitempty"`
+	WikiGrounding    *bool               `json:"wiki_grounding,omitempty"`
+}
 
-	// Apply options
-	if temp, ok := options["temperature"].(float64); ok {
-		req.Temperature = &temp
-	}
-	if topP, ok := options["top_p"].(float64); ok {
-		req.TopP = &topP
-	}
-	if reasoningEffort, ok := options["reasoning_effort"].(ReasoningEffort); ok {
-		req.ReasoningEffort = &reasoningEffort
-	}
-	if maxTokens, ok := options["max_tokens"].(int); ok {
-		req.MaxTokens = &maxTokens
-	}
-	if stream, ok := options["stream"].(bool); ok {
-		req.Stream = &stream
-	}
-	if stop, ok := options["stop"]; ok {
-		req.Stop = stop
-	}
-	if n, ok := options["n"].(int); ok {
-		req.N = &n
-	}
-	if seed, ok := options["seed"].(int64); ok {
-		req.Seed = &seed
-	}
-	if freqPenalty, ok := options["frequency_penalty"].(float64); ok {
-		req.FrequencyPenalty = &freqPenalty
-	}
-	if presPenalty, ok := options["presence_penalty"].(float64); ok {
-		req.PresencePenalty = &presPenalty
-	}
-	if wikiGrounding, ok := options["wiki_grounding"].(bool); ok {
-		req.WikiGrounding = &wikiGrounding
+// ChatCompletionWithOptions creates a chat completion with custom options.
+func (c *Client) ChatCompletionWithOptions(params ChatCompletionWithOptionsParams) (*ChatCompletionResponse, error) {
+	req := &ChatCompletionRequest{
+		Messages:         params.Messages,
+		Model:            params.Model,
+		Temperature:      params.Temperature,
+		TopP:             params.TopP,
+		ReasoningEffort:  params.ReasoningEffort,
+		MaxTokens:        params.MaxTokens,
+		Stream:           params.Stream,
+		Stop:             params.Stop,
+		N:                params.N,
+		Seed:             params.Seed,
+		FrequencyPenalty: params.FrequencyPenalty,
+		PresencePenalty:  params.PresencePenalty,
+		WikiGrounding:    params.WikiGrounding,
 	}
 
 	return c.ChatCompletion(req)

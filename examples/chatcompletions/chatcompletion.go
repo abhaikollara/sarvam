@@ -45,4 +45,25 @@ func main() {
 	}
 
 	fmt.Println("Client instance response:", response2.Choices[0].Message.Content)
+
+	// Example 3: Using ChatCompletionWithOptions with proper params struct
+	fmt.Println("\n=== Using ChatCompletionWithOptions ===")
+
+	// Create params with custom options
+	optionsParams := sarvam.ChatCompletionWithOptionsParams{
+		Model: sarvam.ChatCompletionModelSarvamM,
+		Messages: []sarvam.Message{
+			{Role: "user", Content: "Explain quantum computing in simple terms"},
+		},
+		Temperature: sarvam.Float64(0.7),
+		MaxTokens:   sarvam.Int(150),
+		TopP:        sarvam.Float64(0.9),
+	}
+
+	response3, err := sarvam.ChatCompletionWithOptions(optionsParams)
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+
+	fmt.Println("ChatCompletionWithOptions response:", response3.Choices[0].Message.Content)
 }
