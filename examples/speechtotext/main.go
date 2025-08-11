@@ -22,17 +22,15 @@ func main() {
 		log.Fatalf("File not found: %s", filepath)
 	}
 
-	// Create a new client
-	client := sarvam.NewClient(apiKey)
+	// Example 1: Using package-level functions (new way)
+	fmt.Println("=== Using Package-Level Functions ===")
+	sarvam.SetAPIKey(apiKey)
 
-	// Example 1: Basic speech-to-text
-	fmt.Println("=== Speech-to-Text Example ===")
-	params := sarvam.SpeechToTextParams{
+	// Basic speech-to-text using package-level function
+	result, err := sarvam.SpeechToTextDefault(sarvam.SpeechToTextParams{
 		FilePath: filepath,
 		Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
-	}
-
-	result, err := client.SpeechToText(params)
+	})
 	if err != nil {
 		log.Fatalf("Speech-to-text failed: %v", err)
 	}
@@ -41,8 +39,40 @@ func main() {
 	fmt.Printf("Transcript: %s\n", result.Transcript)
 	fmt.Printf("Language Code: %s\n", result.LanguageCode)
 
-	// Example 2: Speech-to-text with timestamps
-	fmt.Println("\n=== Speech-to-Text with Timestamps ===")
+	// Speech-to-text-translate using package-level function
+	translateResult, err := sarvam.SpeechToTextTranslateDefault(sarvam.SpeechToTextTranslateParams{
+		FilePath: filepath,
+		Model:    &sarvam.SpeechToTextTranslateModelSaarasV2dot5,
+		Prompt:   sarvam.String("This is a conversation is a greeting"),
+	})
+	if err != nil {
+		log.Fatalf("Speech-to-text-translate failed: %v", err)
+	}
+
+	fmt.Printf("Request ID: %s\n", translateResult.RequestId)
+	fmt.Printf("Translated Transcript: %s\n", translateResult.Transcript)
+	fmt.Printf("Detected Language Code: %s\n", translateResult.LanguageCode)
+
+	// Example 2: Using client instance (original way)
+	fmt.Println("\n=== Using Client Instance ===")
+	client := sarvam.NewClient(apiKey)
+
+	// Basic speech-to-text
+	params := sarvam.SpeechToTextParams{
+		FilePath: filepath,
+		Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
+	}
+
+	result2, err := client.SpeechToText(params)
+	if err != nil {
+		log.Fatalf("Speech-to-text failed: %v", err)
+	}
+
+	fmt.Printf("Request ID: %s\n", result2.RequestId)
+	fmt.Printf("Transcript: %s\n", result2.Transcript)
+	fmt.Printf("Language Code: %s\n", result2.LanguageCode)
+
+	// Speech-to-text with timestamps
 	paramsWithTimestamps := sarvam.SpeechToTextParams{
 		FilePath:       filepath,
 		Model:          &sarvam.SpeechToTextModelSaarikaV2dot5,
@@ -59,21 +89,4 @@ func main() {
 	if resultWithTimestamps.Timestamps != nil {
 		fmt.Printf("Number of words with timestamps: %d\n", len(resultWithTimestamps.Timestamps.Words))
 	}
-
-	// Example 3: Speech-to-text-translate (auto-detect language and translate to English)
-	fmt.Println("\n=== Speech-to-Text Translate Example ===")
-	translateParams := sarvam.SpeechToTextTranslateParams{
-		FilePath: filepath,
-		Model:    &sarvam.SpeechToTextTranslateModelSaarasV2dot5,
-		Prompt:   sarvam.String("This is a conversation is a greeting"),
-	}
-
-	translateResult, err := client.SpeechToTextTranslate(translateParams)
-	if err != nil {
-		log.Fatalf("Speech-to-text-translate failed: %v", err)
-	}
-
-	fmt.Printf("Request ID: %s\n", translateResult.RequestId)
-	fmt.Printf("Translated Transcript: %s\n", translateResult.Transcript)
-	fmt.Printf("Detected Language Code: %s\n", translateResult.LanguageCode)
 }

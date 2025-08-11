@@ -10,9 +10,15 @@ import (
 
 func main() {
 	apiKey := os.Getenv("SARVAM_API_KEY")
-	client := sarvam.NewClient(apiKey)
+	if apiKey == "" {
+		log.Fatal("SARVAM_API_KEY environment variable is required")
+	}
 
-	response, err := client.ChatCompletion(&sarvam.ChatCompletionRequest{
+	// Example 1: Using package-level functions (new way)
+	fmt.Println("=== Using Package-Level Functions ===")
+	sarvam.SetAPIKey(apiKey)
+
+	response, err := sarvam.ChatCompletionDefault(&sarvam.ChatCompletionRequest{
 		Model: sarvam.ChatCompletionModelSarvamM,
 		Messages: []sarvam.Message{
 			{Role: "user", Content: "ഹലോ, നിങ്ങൾക്ക് സുഖമാണോ"},
@@ -22,5 +28,21 @@ func main() {
 		log.Fatalf("Error: %v", err)
 	}
 
-	fmt.Println(response.Choices[0].Message.Content)
+	fmt.Println("Package-level response:", response.Choices[0].Message.Content)
+
+	// Example 2: Using client instance (original way)
+	fmt.Println("\n=== Using Client Instance ===")
+	client := sarvam.NewClient(apiKey)
+
+	response2, err := client.ChatCompletion(&sarvam.ChatCompletionRequest{
+		Model: sarvam.ChatCompletionModelSarvamM,
+		Messages: []sarvam.Message{
+			{Role: "user", Content: "Hello, how are you?"},
+		},
+	})
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+
+	fmt.Println("Client instance response:", response2.Choices[0].Message.Content)
 }

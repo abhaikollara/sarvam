@@ -116,3 +116,33 @@ func TestParseAPIError(t *testing.T) {
 	assert.Equal(t, "invalid_request_error", httpErr.Code)
 	assert.Equal(t, "20250801_1f62ae94-d102-4513-a31d-bbb0718052dc", httpErr.RequestID)
 }
+
+// Test default client functionality
+func TestDefaultClient(t *testing.T) {
+	// Test SetAPIKey
+	SetAPIKey("test-api-key")
+	assert.NotNil(t, defaultClient)
+	assert.Equal(t, "test-api-key", defaultClient.apiKey)
+
+	// Test GetDefaultClient
+	client := GetDefaultClient()
+	assert.Equal(t, defaultClient, client)
+}
+
+func TestDefaultClientNil(t *testing.T) {
+	// Reset default client to nil
+	defaultClient = nil
+
+	// Test that package-level functions return error when client is nil
+	_, err := SpeechToTextDefault(SpeechToTextParams{})
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "default client not initialized")
+
+	_, err = ChatCompletionDefault(&ChatCompletionRequest{})
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "default client not initialized")
+
+	_, err = TranslateDefault("hello", LanguageEnglish, LanguageHindi)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "default client not initialized")
+}

@@ -25,6 +25,108 @@ An unofficial Go SDK for the [Sarvam AI](https://sarvam.ai) APIs, providing easy
 go get code.abhai.dev/sarvam
 ```
 
+### Basic Usage
+
+The SDK provides both instance-based and package-level APIs for convenience.
+
+#### Using Package-Level Functions (Recommended for simple use cases)
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "os"
+    
+    "code.abhai.dev/sarvam"
+)
+
+func main() {
+    // Set API key (or set SARVAM_API_KEY environment variable)
+    sarvam.SetAPIKey("your-api-key-here")
+    
+    // Use package-level functions directly
+    result, err := sarvam.SpeechToTextDefault(sarvam.SpeechToTextParams{
+        FilePath: "audio.wav",
+        Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    fmt.Println("Transcript:", result.Transcript)
+}
+```
+
+#### Using Instance-Based Client (Recommended for advanced use cases)
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    
+    "code.abhai.dev/sarvam"
+)
+
+func main() {
+    // Create a client instance
+    client := sarvam.NewClient("your-api-key-here")
+    
+    // Use the client instance
+    result, err := client.SpeechToText(sarvam.SpeechToTextParams{
+        FilePath: "audio.wav",
+        Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    fmt.Println("Transcript:", result.Transcript)
+}
+```
+
+### Environment Variable
+
+You can set the `SARVAM_API_KEY` environment variable instead of calling `SetAPIKey()`:
+
+```bash
+export SARVAM_API_KEY="your-api-key-here"
+```
+
+The SDK will automatically pick up this environment variable on initialization.
+
+### Available Package-Level Functions
+
+The SDK provides the following package-level functions that use the default client:
+
+#### Speech & Audio
+- `sarvam.SpeechToTextDefault(params)` - Convert speech to text
+- `sarvam.SpeechToTextTranslateDefault(params)` - Convert speech to text with translation to English
+- `sarvam.TextToSpeechDefault(params)` - Convert text to speech
+
+#### Chat & AI
+- `sarvam.ChatCompletionDefault(request)` - Generate chat completions
+
+#### Translation & Language
+- `sarvam.TranslateDefault(input, sourceLang, targetLang)` - Translate text between languages
+- `sarvam.TranslateWithOptionsDefault(params)` - Translate text with advanced options
+- `sarvam.IdentifyLanguageDefault(input)` - Identify the language of input text
+- `sarvam.TransliterateDefault(input, sourceLang, targetLang)` - Convert text between scripts
+
+#### Utility Functions
+- `sarvam.SetAPIKey(key)` - Set the API key for the default client
+- `sarvam.GetDefaultClient()` - Get the current default client instance
+
+### Error Handling
+
+All package-level functions return appropriate errors if:
+- The default client is not initialized (call `SetAPIKey()` first)
+- The API key is invalid or expired
+- The request parameters are invalid
+- The API returns an error response
 
 ## 📖 Examples
 
