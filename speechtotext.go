@@ -3,7 +3,9 @@ package sarvam
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 )
 
 // Timestamps represents word-level timing information for speech-to-text results.
@@ -108,7 +110,11 @@ func (s *SpeechToTextTranslateResponse) String() string {
 
 // SpeechToTextTranslateParams contains parameters for speech-to-text-translate conversion.
 type SpeechToTextTranslateParams struct {
-	FilePath   string                      // Required: Path to the audio file
+	// Any of FilePath, File, or Reader must be provided
+	FilePath string
+	File     *os.File
+	Reader   io.Reader
+
 	Prompt     *string                     // Optional: Conversation context to boost model accuracy
 	Model      *SpeechToTextTranslateModel // Optional: Model to use for speech-to-text conversion
 	AudioCodec *AudioCodec                 // Optional: Audio codec to use for speech-to-text conversion
