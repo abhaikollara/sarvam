@@ -41,11 +41,8 @@ func (s *SpeechToTextResponse) String() string {
 	return s.Transcript
 }
 
-// TODO: 1. Consider moving the filepath into a seperate param and keep the rest in Params struct
-// TODO: 2. Add a way to pass in the audio data directly instead of a filepath
 // SpeechToTextParams contains parameters for speech-to-text conversion.
 type SpeechToTextParams struct {
-	FilePath       string             // Required: Path to the audio file
 	Model          *SpeechToTextModel // Optional: Model to use (default: saarika:v2.5)
 	LanguageCode   *Language          // Optional: Language code for the input audio
 	WithTimestamps *bool              // Optional: Whether to include timestamps in response
