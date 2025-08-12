@@ -284,7 +284,7 @@ func Translate(input string, sourceLanguageCode, targetLanguageCode Language, pa
 }
 
 // IdentifyLanguage is a package-level function that uses the default client
-func IdentifyLanguage(input string) (*LanguageIdentification, error) {
+func IdentifyLanguage(input string) (*LanguageIdentificationResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
@@ -292,7 +292,7 @@ func IdentifyLanguage(input string) (*LanguageIdentification, error) {
 }
 
 // Transliterate is a package-level function that uses the default client
-func Transliterate(input string, sourceLanguage Language, targetLanguage Language) (*Transliteration, error) {
+func Transliterate(input string, sourceLanguage Language, targetLanguage Language) (*TransliterationResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}

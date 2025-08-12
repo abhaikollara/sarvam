@@ -145,15 +145,14 @@ func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode 
 }
 
 // LanguageIdentification represents the result of language identification.
-// TODO: Should this struct be renamed to LanguageIdentificationResponse ?
-type LanguageIdentification struct {
+type LanguageIdentificationResponse struct {
 	RequestId string
 	Language  Language
 	Script    Script
 }
 
 // IdentifyLanguage identifies the language (e.g., en-IN, hi-IN) and script (e.g., Latin, Devanagari) of the input text, supporting multiple languages.
-func (c *Client) IdentifyLanguage(input string) (*LanguageIdentification, error) {
+func (c *Client) IdentifyLanguage(input string) (*LanguageIdentificationResponse, error) {
 	var payload = map[string]string{
 		"input": input,
 	}
@@ -179,29 +178,28 @@ func (c *Client) IdentifyLanguage(input string) (*LanguageIdentification, error)
 		return nil, err
 	}
 
-	return &LanguageIdentification{
+	return &LanguageIdentificationResponse{
 		RequestId: response.RequestId,
 		Language:  mapLanguageCodeToLanguage(response.LanguageCode),
 		Script:    mapScriptCodeToScript(response.ScriptCode),
 	}, nil
 }
 
-// Transliteration represents the result of a transliteration operation.
-// TODO: Should this struct be renamed to TransliterationResponse ?
-type Transliteration struct {
+// TransliterationResponse represents the result of a transliteration operation.
+type TransliterationResponse struct {
 	RequestId          string
 	TransliteratedText string
 	SourceLanguage     Language
 }
 
 // String returns the transliterated text.
-func (t *Transliteration) String() string {
+func (t *TransliterationResponse) String() string {
 	return string(t.TransliteratedText)
 }
 
 // Transliterate converts text from one script to another while preserving the original pronunciation.
 // TODO: There are more params. See docs. Add them. This would change the signature I guess.
-func (c *Client) Transliterate(input string, sourceLanguage Language, targetLanguage Language) (*Transliteration, error) {
+func (c *Client) Transliterate(input string, sourceLanguage Language, targetLanguage Language) (*TransliterationResponse, error) {
 	if l := len(input); l >= 1000 {
 		return nil, &ErrInputTooLong{
 			InputLength: l,
@@ -237,7 +235,7 @@ func (c *Client) Transliterate(input string, sourceLanguage Language, targetLang
 		return nil, err
 	}
 
-	return &Transliteration{
+	return &TransliterationResponse{
 		RequestId:          response.RequestId,
 		TransliteratedText: response.TransliteratedText,
 		SourceLanguage:     mapLanguageCodeToLanguage(response.SourceLanguage),
