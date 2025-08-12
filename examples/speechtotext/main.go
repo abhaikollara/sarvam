@@ -83,7 +83,6 @@ func main() {
 
 	// Speech-to-text with timestamps
 	paramsWithTimestamps := sarvam.SpeechToTextParams{
-		FilePath:       filepath,
 		Model:          &sarvam.SpeechToTextModelSaarikaV2dot5,
 		WithTimestamps: sarvam.Ptr(true),
 	}

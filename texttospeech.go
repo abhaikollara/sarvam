@@ -28,8 +28,6 @@ func (t *TextToSpeechResponse) Save(filename string) error {
 
 // TextToSpeechParams contains all parameters for text-to-speech conversion.
 type TextToSpeechParams struct {
-	Text                string
-	TargetLanguage      Language
 	Speaker             *Speaker
 	Pitch               *float64
 	Pace                *float64
@@ -50,10 +48,10 @@ var (
 )
 
 // TextToSpeech converts text to speech in the specified language.
-func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeechResponse, error) {
+func (c *Client) TextToSpeech(text string, targetLanguage Language, params TextToSpeechParams) (*TextToSpeechResponse, error) {
 	var payload = map[string]any{
-		"text":                 params.Text,
-		"target_language_code": params.TargetLanguage,
+		"text":                 text,
+		"target_language_code": targetLanguage,
 	}
 	if params.Speaker != nil {
 		payload["voice"] = *params.Speaker
