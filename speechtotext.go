@@ -40,6 +40,8 @@ func (s *SpeechToTextResponse) String() string {
 	return s.Transcript
 }
 
+// TODO: 1. Consider moving the filepath into a seperate param and keep the rest in Params struct
+// TODO: 2. Add a way to pass in the audio data directly instead of a filepath
 // SpeechToTextParams contains parameters for speech-to-text conversion.
 type SpeechToTextParams struct {
 	FilePath       string             // Required: Path to the audio file
@@ -109,6 +111,7 @@ type SpeechToTextTranslateParams struct {
 	FilePath string                      // Required: Path to the audio file
 	Prompt   *string                     // Optional: Conversation context to boost model accuracy
 	Model    *SpeechToTextTranslateModel // Optional: Model to use for speech-to-text conversion
+	// TODO: AudioCodec params is missing
 }
 
 // SpeechToTextTranslate automatically detects the input language, transcribes the speech, and translates the text to English.

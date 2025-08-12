@@ -11,7 +11,7 @@ import (
 type TextToSpeechResponse struct {
 	RequestId string
 	Audios    []string
-	Data      []byte
+	Data      []byte // TODO: This should probably be a method instead of a field
 }
 
 // Save saves the text-to-speech data as a WAV file.
@@ -51,6 +51,7 @@ func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeechResponse,
 	if params.Speaker != nil {
 		payload["voice"] = *params.Speaker
 	}
+	// TODO: Add constraints as per the API docs for pitch, pace, etc...
 	if params.Pitch != nil {
 		payload["pitch"] = *params.Pitch
 	}

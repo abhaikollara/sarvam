@@ -51,6 +51,7 @@ const (
 )
 
 // Translation represents the result of a translation operation.
+// TODO: Should this struct be renamed to TranslationResponse ?
 type Translation struct {
 	RequestId      string
 	TranslatedText string
@@ -64,6 +65,7 @@ func (t *Translation) String() string {
 
 // Translate converts text from one language to another while preserving its meaning.
 // This is the simple version that uses default parameters.
+// TODO: Is this needed ? TranslateWithParams is already there. Leave it to the user.
 func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode Language) (*Translation, error) {
 	return c.TranslateWithParams(&TranslateParams{
 		Input:          input,
@@ -158,6 +160,7 @@ func (c *Client) TranslateWithParams(params *TranslateParams) (*Translation, err
 }
 
 // LanguageIdentification represents the result of language identification.
+// TODO: Should this struct be renamed to LanguageIdentificationResponse ?
 type LanguageIdentification struct {
 	RequestId string
 	Language  Language
@@ -199,6 +202,7 @@ func (c *Client) IdentifyLanguage(input string) (*LanguageIdentification, error)
 }
 
 // Transliteration represents the result of a transliteration operation.
+// TODO: Should this struct be renamed to TransliterationResponse ?
 type Transliteration struct {
 	RequestId          string
 	TransliteratedText string
@@ -211,6 +215,7 @@ func (t *Transliteration) String() string {
 }
 
 // Transliterate converts text from one script to another while preserving the original pronunciation.
+// TODO: There are more params. See docs. Add them. This would change the signature I guess.
 func (c *Client) Transliterate(input string, sourceLanguage Language, targetLanguage Language) (*Transliteration, error) {
 	if l := len(input); l >= 1000 {
 		return nil, &ErrInputTooLong{

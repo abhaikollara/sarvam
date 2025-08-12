@@ -30,7 +30,7 @@ type ChatCompletionParams struct {
 	ReasoningEffort  *ReasoningEffort    `json:"reasoning_effort,omitempty"`
 	MaxTokens        *int                `json:"max_tokens,omitempty"`
 	Stream           *bool               `json:"stream,omitempty"`
-	Stop             interface{}         `json:"stop,omitempty"` // string or []string
+	Stop             interface{}         `json:"stop,omitempty"` // string or []string. TODO: Find a way to make this more type safe.
 	N                *int                `json:"n,omitempty"`
 	Seed             *int64              `json:"seed,omitempty"`
 	FrequencyPenalty *float64            `json:"frequency_penalty,omitempty"`
@@ -75,6 +75,7 @@ func (c *Client) ChatCompletion(req *ChatCompletionParams) (*ChatCompletionRespo
 	if req.Model == "" {
 		return nil, fmt.Errorf("model is required")
 	}
+	// TODO: Include constraints as per the API docs
 
 	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/v1/chat/completions", req)
 	if err != nil {

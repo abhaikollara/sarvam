@@ -54,6 +54,7 @@ func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer, content
 }
 
 // makeMultipartRequest sends a multipart form request to the Sarvam AI API.
+// TODO: This should be named better. Right now it feels too generic.
 func (c *Client) makeMultipartRequest(endpoint, filePath string, model *SpeechToTextModel, languageCode *string, withTimestamps *bool) (*http.Response, error) {
 	// Open the file
 	file, err := os.Open(filePath)
@@ -212,6 +213,7 @@ func parseAPIError(resp *http.Response) error {
 	}
 }
 
+// TODO: Cleanup all this. Just a single function to return a pointer to the value
 // Bool returns a pointer to the boolean value.
 func Bool(b bool) *bool {
 	return &b
