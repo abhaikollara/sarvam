@@ -8,7 +8,7 @@ func TestTranslateWithParams(t *testing.T) {
 	client := NewClient("test-key")
 
 	// Test basic translation
-	_, err := client.Translate("Hello", LanguageEnglish, LanguageHindi)
+	_, err := client.Translate("Hello", LanguageEnglish, LanguageHindi, nil)
 	if err == nil {
 		t.Error("Expected error for invalid API key, got nil")
 	}
@@ -22,9 +22,6 @@ func TestTranslateWithParams(t *testing.T) {
 	numeralsFormat := NumeralsFormatInternational
 
 	options := &TranslateParams{
-		Input:               "Hello",
-		SourceLanguage:      LanguageEnglish,
-		TargetLanguage:      LanguageHindi,
 		SpeakerGender:       &speakerGender,
 		Mode:                &mode,
 		Model:               &model,
@@ -33,7 +30,7 @@ func TestTranslateWithParams(t *testing.T) {
 		NumeralsFormat:      &numeralsFormat,
 	}
 
-	_, err = client.TranslateWithParams(options)
+	_, err = client.Translate("Hello", LanguageEnglish, LanguageHindi, options)
 	if err == nil {
 		t.Error("Expected error for invalid API key, got nil")
 	}
@@ -49,15 +46,12 @@ func TestTranslateInputLengthValidation(t *testing.T) {
 	model := TranslationModelMayuraV1
 
 	options := &TranslateParams{
-		Input:          longInput,
-		SourceLanguage: LanguageEnglish,
-		TargetLanguage: LanguageHindi,
-		SpeakerGender:  &speakerGender,
-		Mode:           &mode,
-		Model:          &model,
+		SpeakerGender: &speakerGender,
+		Mode:          &mode,
+		Model:         &model,
 	}
 
-	_, err := client.TranslateWithParams(options)
+	_, err := client.Translate(longInput, LanguageEnglish, LanguageHindi, options)
 	if err == nil {
 		t.Error("Expected error for input too long, got nil")
 	}
@@ -67,13 +61,10 @@ func TestTranslateInputLengthValidation(t *testing.T) {
 	sarvamModel := TranslationModelSarvamTranslate
 
 	sarvamOptions := &TranslateParams{
-		Input:          veryLongInput,
-		SourceLanguage: LanguageEnglish,
-		TargetLanguage: LanguageHindi,
-		Model:          &sarvamModel,
+		Model: &sarvamModel,
 	}
 
-	_, err = client.TranslateWithParams(sarvamOptions)
+	_, err = client.Translate(veryLongInput, LanguageEnglish, LanguageHindi, sarvamOptions)
 	if err == nil {
 		t.Error("Expected error for input too long, got nil")
 	}
@@ -111,7 +102,7 @@ func TestTranslateParamsValidation(t *testing.T) {
 }
 
 func TestTranslationString(t *testing.T) {
-	translation := &Translation{
+	translation := &TranslationResponse{
 		RequestId:      "test-id",
 		TranslatedText: "नमस्ते",
 		SourceLanguage: LanguageEnglish,

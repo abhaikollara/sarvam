@@ -52,33 +52,19 @@ const (
 
 // Translation represents the result of a translation operation.
 // TODO: Should this struct be renamed to TranslationResponse ?
-type Translation struct {
+type TranslationResponse struct {
 	RequestId      string
 	TranslatedText string
 	SourceLanguage Language
 }
 
 // String returns the translated text.
-func (t *Translation) String() string {
+func (t *TranslationResponse) String() string {
 	return string(t.TranslatedText)
-}
-
-// Translate converts text from one language to another while preserving its meaning.
-// This is the simple version that uses default parameters.
-// TODO: Is this needed ? TranslateWithParams is already there. Leave it to the user.
-func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode Language) (*Translation, error) {
-	return c.TranslateWithParams(&TranslateParams{
-		Input:          input,
-		SourceLanguage: sourceLanguageCode,
-		TargetLanguage: targetLanguageCode,
-	})
 }
 
 // TranslateParams contains all optional parameters for translation.
 type TranslateParams struct {
-	Input               string
-	SourceLanguage      Language
-	TargetLanguage      Language
 	SpeakerGender       *SpeakerGender
 	Mode                *TranslationMode
 	Model               *TranslationModel
@@ -88,14 +74,14 @@ type TranslateParams struct {
 }
 
 // TranslateWithParams converts text from one language to another with custom parameters.
-func (c *Client) TranslateWithParams(params *TranslateParams) (*Translation, error) {
+func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode Language, params *TranslateParams) (*TranslationResponse, error) {
 	// Validate input length based on model
 	maxLength := 2000 // Default for sarvam-translate:v1
 	if params != nil && params.Model != nil && *params.Model == TranslationModelMayuraV1 {
 		maxLength = 1000
 	}
 
-	if l := len(params.Input); l > maxLength {
+	if l := len(input); l > maxLength {
 		return nil, &ErrInputTooLong{
 			InputLength: l,
 			MaxLength:   maxLength,
@@ -103,9 +89,9 @@ func (c *Client) TranslateWithParams(params *TranslateParams) (*Translation, err
 	}
 
 	var reqBody = map[string]any{
-		"input":                params.Input,
-		"source_language_code": params.SourceLanguage,
-		"target_language_code": params.TargetLanguage,
+		"input":                input,
+		"source_language_code": sourceLanguageCode,
+		"target_language_code": targetLanguageCode,
 	}
 
 	// Add optional parameters if provided
@@ -152,7 +138,7 @@ func (c *Client) TranslateWithParams(params *TranslateParams) (*Translation, err
 		return nil, err
 	}
 
-	return &Translation{
+	return &TranslationResponse{
 		RequestId:      response.RequestId,
 		TranslatedText: response.TranslatedText,
 		SourceLanguage: mapLanguageCodeToLanguage(response.SourceLanguage),

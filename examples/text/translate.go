@@ -13,7 +13,7 @@ func main() {
 	client := sarvam.NewClient(apiKey)
 
 	// Basic translation
-	response, err := client.Translate("Hello, how are you?", sarvam.LanguageEnglish, sarvam.LanguageHindi)
+	response, err := client.Translate("Hello, how are you?", sarvam.LanguageEnglish, sarvam.LanguageHindi, nil)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
@@ -29,9 +29,6 @@ func main() {
 	numeralsFormat := sarvam.NumeralsFormatNative
 
 	params := &sarvam.TranslateParams{
-		Input:               "Hello, how are you?",
-		SourceLanguage:      sarvam.LanguageEnglish,
-		TargetLanguage:      sarvam.LanguageHindi,
 		SpeakerGender:       &speakerGender,
 		Mode:                &mode,
 		Model:               &model,
@@ -40,7 +37,7 @@ func main() {
 		NumeralsFormat:      &numeralsFormat,
 	}
 
-	advancedResponse, err := client.TranslateWithParams(params)
+	advancedResponse, err := client.Translate("Hello, how are you?", sarvam.LanguageEnglish, sarvam.LanguageHindi, params)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
@@ -53,15 +50,12 @@ func main() {
 	sarvamPreprocessing := true
 
 	sarvamParams := &sarvam.TranslateParams{
-		Input:               "मैं ऑफिस जा रहा हूँ",
-		SourceLanguage:      sarvam.LanguageHindi,
-		TargetLanguage:      sarvam.LanguageEnglish,
 		Model:               &sarvamModel,
 		Mode:                &sarvamMode,
 		EnablePreprocessing: &sarvamPreprocessing,
 	}
 
-	sarvamResponse, err := client.TranslateWithParams(sarvamParams)
+	sarvamResponse, err := client.Translate("मैं ऑफिस जा रहा हूँ", sarvam.LanguageHindi, sarvam.LanguageEnglish, sarvamParams)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}

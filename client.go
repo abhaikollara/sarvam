@@ -276,19 +276,11 @@ func ChatCompletionWithParams(params *ChatCompletionParams) (*ChatCompletionResp
 }
 
 // Translate is a package-level function that uses the default client
-func Translate(input string, sourceLanguageCode, targetLanguageCode Language) (*Translation, error) {
+func Translate(input string, sourceLanguageCode, targetLanguageCode Language, params *TranslateParams) (*TranslationResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
-	return defaultClient.Translate(input, sourceLanguageCode, targetLanguageCode)
-}
-
-// TranslateWithParams is a package-level function that uses the default client
-func TranslateWithParams(params *TranslateParams) (*Translation, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
-	}
-	return defaultClient.TranslateWithParams(params)
+	return defaultClient.Translate(input, sourceLanguageCode, targetLanguageCode, params)
 }
 
 // IdentifyLanguage is a package-level function that uses the default client

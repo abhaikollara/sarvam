@@ -132,7 +132,7 @@ func TestDefaultClientNil(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "default client not initialized")
 
-	_, err = Translate("hello", LanguageEnglish, LanguageHindi)
+	_, err = Translate("hello", LanguageEnglish, LanguageHindi, nil)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "default client not initialized")
 }
