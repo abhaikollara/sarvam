@@ -50,8 +50,7 @@ const (
 	NumeralsFormatNative NumeralsFormat = "native"
 )
 
-// Translation represents the result of a translation operation.
-// TODO: Should this struct be renamed to TranslationResponse ?
+// TranslationResponse represents the result of a translation operation.
 type TranslationResponse struct {
 	RequestId      string
 	TranslatedText string
