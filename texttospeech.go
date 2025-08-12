@@ -11,12 +11,19 @@ import (
 type TextToSpeechResponse struct {
 	RequestId string
 	Audios    []string
-	Data      []byte // TODO: This should probably be a method instead of a field
+}
+
+func (t *TextToSpeechResponse) Bytes() ([]byte, error) {
+	return convertAndConcatBase64ToBytes(t.Audios)
 }
 
 // Save saves the text-to-speech data as a WAV file.
 func (t *TextToSpeechResponse) Save(filename string) error {
-	return os.WriteFile(filename+".wav", t.Data, 0644)
+	data, err := t.Bytes()
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filename, data, 0644)
 }
 
 // TextToSpeechParams contains all parameters for text-to-speech conversion.
@@ -92,14 +99,9 @@ func (c *Client) TextToSpeech(params TextToSpeechParams) (*TextToSpeechResponse,
 		return nil, err
 	}
 
-	data, err := convertAndConcatBase64ToBytes(response.Audios)
-	if err != nil {
-		return nil, err
-	}
 	return &TextToSpeechResponse{
 		RequestId: response.RequestId,
 		Audios:    response.Audios,
-		Data:      data,
 	}, nil
 }
 
