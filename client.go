@@ -53,50 +53,43 @@ func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer, content
 	return http.DefaultClient.Do(req)
 }
 
-// makeMultipartRequest sends a multipart form request to the Sarvam AI API.
-// TODO: This should be named better. Right now it feels too generic.
-func (c *Client) makeMultipartRequest(endpoint, filePath string, model *SpeechToTextModel, languageCode *string, withTimestamps *bool) (*http.Response, error) {
-	// Open the file
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file: %w", err)
-	}
-	defer file.Close()
+// buildSpeechToTextRequest builds a multipart form request for speech-to-text.
+func (c *Client) buildSpeechToTextRequest(endpoint string, speech io.Reader, params SpeechToTextParams) (*http.Response, error) {
 
 	// Create a buffer to store the multipart form data
 	var requestBody bytes.Buffer
 	writer := multipart.NewWriter(&requestBody)
 	// Create a form file field
-	part, err := writer.CreateFormFile("file", file.Name())
+	part, err := writer.CreateFormFile("file", "speech.wav")
 	if err != nil {
 		return nil, fmt.Errorf("failed to create form file: %w", err)
 	}
 
 	// Copy the file content to the form field
-	_, err = io.Copy(part, file)
+	_, err = io.Copy(part, speech)
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy file content: %w", err)
 	}
 
 	// Add model parameter if provided
-	if model != nil {
-		err = writer.WriteField("model", string(*model))
+	if params.Model != nil {
+		err = writer.WriteField("model", string(*params.Model))
 		if err != nil {
 			return nil, fmt.Errorf("failed to write model field: %w", err)
 		}
 	}
 
 	// Add language_code parameter if provided
-	if languageCode != nil {
-		err = writer.WriteField("language_code", *languageCode)
+	if params.LanguageCode != nil {
+		err = writer.WriteField("language_code", string(*params.LanguageCode))
 		if err != nil {
 			return nil, fmt.Errorf("failed to write language_code field: %w", err)
 		}
 	}
 
 	// Add with_timestamps parameter if provided
-	if withTimestamps != nil {
-		err = writer.WriteField("with_timestamps", fmt.Sprintf("%t", *withTimestamps))
+	if params.WithTimestamps != nil {
+		err = writer.WriteField("with_timestamps", fmt.Sprintf("%t", *params.WithTimestamps))
 		if err != nil {
 			return nil, fmt.Errorf("failed to write with_timestamps field: %w", err)
 		}
@@ -243,11 +236,11 @@ func GetDefaultClient() *Client {
 // Package-level convenience functions that use the default client
 
 // SpeechToText is a package-level function that uses the default client
-func SpeechToText(params SpeechToTextParams) (*SpeechToTextResponse, error) {
+func SpeechToText(speech io.Reader, params SpeechToTextParams) (*SpeechToTextResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
-	return defaultClient.SpeechToText(params)
+	return defaultClient.SpeechToText(speech, params)
 }
 
 // SpeechToTextTranslate is a package-level function that uses the default client

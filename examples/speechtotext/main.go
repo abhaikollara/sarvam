@@ -27,9 +27,14 @@ func main() {
 	sarvam.SetAPIKey(apiKey)
 
 	// Basic speech-to-text using package-level function
-	result, err := sarvam.SpeechToText(sarvam.SpeechToTextParams{
-		FilePath: filepath,
-		Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
+	speech, err := os.Open(filepath)
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", err)
+	}
+	defer speech.Close()
+
+	result, err := sarvam.SpeechToText(speech, sarvam.SpeechToTextParams{
+		Model: &sarvam.SpeechToTextModelSaarikaV2dot5,
 	})
 	if err != nil {
 		log.Fatalf("Speech-to-text failed: %v", err)
@@ -40,7 +45,7 @@ func main() {
 	fmt.Printf("Language Code: %s\n", result.LanguageCode)
 
 	// Speech-to-text-translate using package-level function
-	speech, err := os.Open(filepath)
+	speech, err = os.Open(filepath)
 	if err != nil {
 		log.Fatalf("Failed to open file: %v", err)
 	}
@@ -64,11 +69,10 @@ func main() {
 
 	// Basic speech-to-text
 	params := sarvam.SpeechToTextParams{
-		FilePath: filepath,
-		Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
+		Model: &sarvam.SpeechToTextModelSaarikaV2dot5,
 	}
 
-	result2, err := client.SpeechToText(params)
+	result2, err := client.SpeechToText(speech, params)
 	if err != nil {
 		log.Fatalf("Speech-to-text failed: %v", err)
 	}
@@ -84,7 +88,7 @@ func main() {
 		WithTimestamps: sarvam.Ptr(true),
 	}
 
-	resultWithTimestamps, err := client.SpeechToText(paramsWithTimestamps)
+	resultWithTimestamps, err := client.SpeechToText(speech, paramsWithTimestamps)
 	if err != nil {
 		log.Fatalf("Speech-to-text with timestamps failed: %v", err)
 	}

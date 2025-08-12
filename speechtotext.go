@@ -52,15 +52,8 @@ type SpeechToTextParams struct {
 }
 
 // SpeechToText converts speech from an audio file to text.
-func (c *Client) SpeechToText(params SpeechToTextParams) (*SpeechToTextResponse, error) {
-	// Convert *Language to *string for the API call
-	var languageCodeStr *string
-	if params.LanguageCode != nil {
-		codeStr := string(*params.LanguageCode)
-		languageCodeStr = &codeStr
-	}
-
-	resp, err := c.makeMultipartRequest("/speech-to-text", params.FilePath, params.Model, languageCodeStr, params.WithTimestamps)
+func (c *Client) SpeechToText(speech io.Reader, params SpeechToTextParams) (*SpeechToTextResponse, error) {
+	resp, err := c.buildSpeechToTextRequest("/speech-to-text", speech, params)
 	if err != nil {
 		return nil, err
 	}

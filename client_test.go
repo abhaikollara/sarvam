@@ -124,7 +124,7 @@ func TestDefaultClientNil(t *testing.T) {
 	defaultClient = nil
 
 	// Test that package-level functions return error when client is nil
-	_, err := SpeechToText(SpeechToTextParams{})
+	_, err := SpeechToText(io.NopCloser(strings.NewReader("")), SpeechToTextParams{})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "default client not initialized")
 
