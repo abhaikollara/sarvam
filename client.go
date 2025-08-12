@@ -111,10 +111,10 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *SpeechTo
 	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
 }
 
-// makeMultipartRequestTranslate sends a multipart form request for speech-to-text translation.
-func (c *Client) makeMultipartRequestTranslate(endpoint, filePath string, prompt *string, model *SpeechToTextTranslateModel) (*http.Response, error) {
+// buildSpeechToTextTranslateRequest builds a multipart form request for speech-to-text translation.
+func (c *Client) buildSpeechToTextTranslateRequest(endpoint string, params SpeechToTextTranslateParams) (*http.Response, error) {
 	// Open the file
-	file, err := os.Open(filePath)
+	file, err := os.Open(params.FilePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
 	}
@@ -136,16 +136,16 @@ func (c *Client) makeMultipartRequestTranslate(endpoint, filePath string, prompt
 	}
 
 	// Add prompt parameter if provided
-	if prompt != nil {
-		err = writer.WriteField("prompt", *prompt)
+	if params.Prompt != nil {
+		err = writer.WriteField("prompt", *params.Prompt)
 		if err != nil {
 			return nil, fmt.Errorf("failed to write prompt field: %w", err)
 		}
 	}
 
 	// Add model parameter if provided
-	if model != nil {
-		err = writer.WriteField("model", string(*model))
+	if params.Model != nil {
+		err = writer.WriteField("model", string(*params.Model))
 		if err != nil {
 			return nil, fmt.Errorf("failed to write model field: %w", err)
 		}

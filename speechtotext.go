@@ -116,7 +116,7 @@ type SpeechToTextTranslateParams struct {
 
 // SpeechToTextTranslate automatically detects the input language, transcribes the speech, and translates the text to English.
 func (c *Client) SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
-	resp, err := c.makeMultipartRequestTranslate("/speech-to-text-translate", params.FilePath, params.Prompt, params.Model)
+	resp, err := c.buildSpeechToTextTranslateRequest("/speech-to-text-translate", params)
 	if err != nil {
 		return nil, err
 	}
