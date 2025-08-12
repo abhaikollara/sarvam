@@ -108,11 +108,40 @@ func (s *SpeechToTextTranslateResponse) String() string {
 
 // SpeechToTextTranslateParams contains parameters for speech-to-text-translate conversion.
 type SpeechToTextTranslateParams struct {
-	FilePath string                      // Required: Path to the audio file
-	Prompt   *string                     // Optional: Conversation context to boost model accuracy
-	Model    *SpeechToTextTranslateModel // Optional: Model to use for speech-to-text conversion
-	// TODO: AudioCodec params is missing
+	FilePath   string                      // Required: Path to the audio file
+	Prompt     *string                     // Optional: Conversation context to boost model accuracy
+	Model      *SpeechToTextTranslateModel // Optional: Model to use for speech-to-text conversion
+	AudioCodec *AudioCodec                 // Optional: Audio codec to use for speech-to-text conversion
 }
+
+type AudioCodec string
+
+var (
+	AudioCodecWav      AudioCodec = "wav"
+	AudioCodecXWav     AudioCodec = "x-wav"
+	AudioCodecWave     AudioCodec = "wave"
+	AudioCodecMp3      AudioCodec = "mp3"
+	AudioCodecMpeg     AudioCodec = "mpeg"
+	AudioCodecMpeg3    AudioCodec = "mpeg3"
+	AudioCodecXMp3     AudioCodec = "x-mp3"
+	AudioCodecXMpeg3   AudioCodec = "x-mpeg-3"
+	AudioCodecAac      AudioCodec = "aac"
+	AudioCodecXAac     AudioCodec = "x-aac"
+	AudioCodecAiff     AudioCodec = "aiff"
+	AudioCodecXAiff    AudioCodec = "x-aiff"
+	AudioCodecOgg      AudioCodec = "ogg"
+	AudioCodecOpus     AudioCodec = "opus"
+	AudioCodecFlac     AudioCodec = "flac"
+	AudioCodecXFlac    AudioCodec = "x-flac"
+	AudioCodecMp4      AudioCodec = "mp4"
+	AudioCodecXM4a     AudioCodec = "x-m4a"
+	AudioCodecAmr      AudioCodec = "amr"
+	AudioCodecXMsWma   AudioCodec = "x-ms-wma"
+	AudioCodecWebm     AudioCodec = "webm"
+	AudioCodecPcmS16le AudioCodec = "pcm_s16le"
+	AudioCodecPcmL16   AudioCodec = "pcm_l16"
+	AudioCodecPcmRaw   AudioCodec = "pcm_raw"
+)
 
 // SpeechToTextTranslate automatically detects the input language, transcribes the speech, and translates the text to English.
 func (c *Client) SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {

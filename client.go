@@ -151,6 +151,14 @@ func (c *Client) buildSpeechToTextTranslateRequest(endpoint string, params Speec
 		}
 	}
 
+	// Add audio_codec parameter if provided
+	if params.AudioCodec != nil {
+		err = writer.WriteField("audio_codec", string(*params.AudioCodec))
+		if err != nil {
+			return nil, fmt.Errorf("failed to write audio_codec field: %w", err)
+		}
+	}
+
 	// Close the multipart writer
 	err = writer.Close()
 	if err != nil {
