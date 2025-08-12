@@ -43,7 +43,7 @@ func main() {
 	translateResult, err := sarvam.SpeechToTextTranslate(sarvam.SpeechToTextTranslateParams{
 		FilePath: filepath,
 		Model:    &sarvam.SpeechToTextTranslateModelSaarasV2dot5,
-		Prompt:   sarvam.String("This is a conversation is a greeting"),
+		Prompt:   sarvam.Ptr("This is a conversation is a greeting"),
 	})
 	if err != nil {
 		log.Fatalf("Speech-to-text-translate failed: %v", err)
@@ -76,7 +76,7 @@ func main() {
 	paramsWithTimestamps := sarvam.SpeechToTextParams{
 		FilePath:       filepath,
 		Model:          &sarvam.SpeechToTextModelSaarikaV2dot5,
-		WithTimestamps: sarvam.Bool(true),
+		WithTimestamps: sarvam.Ptr(true),
 	}
 
 	resultWithTimestamps, err := client.SpeechToText(paramsWithTimestamps)

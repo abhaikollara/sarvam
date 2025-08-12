@@ -59,19 +59,9 @@ func (h *handler) handleHTTPRequest(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func TestBool(t *testing.T) {
-	b := Bool(true)
+func TestPtr(t *testing.T) {
+	b := Ptr(true)
 	assert.Equal(t, *b, true)
-}
-
-func TestFloat64(t *testing.T) {
-	f := Float64(1.0)
-	assert.Equal(t, *f, 1.0)
-}
-
-func TestInt(t *testing.T) {
-	i := Int(1)
-	assert.Equal(t, *i, 1)
 }
 
 func TestHTTPError(t *testing.T) {

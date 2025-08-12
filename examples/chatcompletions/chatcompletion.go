@@ -55,9 +55,9 @@ func main() {
 		Messages: []sarvam.Message{
 			{Role: "user", Content: "Explain quantum computing in simple terms"},
 		},
-		Temperature: sarvam.Float64(0.7),
-		MaxTokens:   sarvam.Int(150),
-		TopP:        sarvam.Float64(0.9),
+		Temperature: sarvam.Ptr(0.7),
+		MaxTokens:   sarvam.Ptr(150),
+		TopP:        sarvam.Ptr(0.9),
 	}
 
 	response3, err := sarvam.ChatCompletionWithParams(customParams)

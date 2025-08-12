@@ -213,25 +213,8 @@ func parseAPIError(resp *http.Response) error {
 	}
 }
 
-// TODO: Cleanup all this. Just a single function to return a pointer to the value
-// Bool returns a pointer to the boolean value.
-func Bool(b bool) *bool {
-	return &b
-}
-
-// Float64 returns a pointer to the float64 value.
-func Float64(f float64) *float64 {
-	return &f
-}
-
-// Int returns a pointer to the int value.
-func Int(i int) *int {
-	return &i
-}
-
-// String returns a pointer to the string value.
-func String(s string) *string {
-	return &s
+func Ptr[T any](v T) *T {
+	return &v
 }
 
 // defaultClient is the default client instance used by package-level functions
