@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 )
 
 // Timestamps represents word-level timing information for speech-to-text results.
@@ -110,11 +109,6 @@ func (s *SpeechToTextTranslateResponse) String() string {
 
 // SpeechToTextTranslateParams contains parameters for speech-to-text-translate conversion.
 type SpeechToTextTranslateParams struct {
-	// Any of FilePath, File, or Reader must be provided
-	FilePath string
-	File     *os.File
-	Reader   io.Reader
-
 	Prompt     *string                     // Optional: Conversation context to boost model accuracy
 	Model      *SpeechToTextTranslateModel // Optional: Model to use for speech-to-text conversion
 	AudioCodec *AudioCodec                 // Optional: Audio codec to use for speech-to-text conversion
@@ -150,8 +144,8 @@ var (
 )
 
 // SpeechToTextTranslate automatically detects the input language, transcribes the speech, and translates the text to English.
-func (c *Client) SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
-	resp, err := c.buildSpeechToTextTranslateRequest("/speech-to-text-translate", params)
+func (c *Client) SpeechToTextTranslate(speech io.Reader, params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
+	resp, err := c.buildSpeechToTextTranslateRequest("/speech-to-text-translate", speech, params)
 	if err != nil {
 		return nil, err
 	}

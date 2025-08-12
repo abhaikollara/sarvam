@@ -40,10 +40,15 @@ func main() {
 	fmt.Printf("Language Code: %s\n", result.LanguageCode)
 
 	// Speech-to-text-translate using package-level function
-	translateResult, err := sarvam.SpeechToTextTranslate(sarvam.SpeechToTextTranslateParams{
-		FilePath: filepath,
-		Model:    &sarvam.SpeechToTextTranslateModelSaarasV2dot5,
-		Prompt:   sarvam.Ptr("This is a conversation is a greeting"),
+	speech, err := os.Open(filepath)
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", err)
+	}
+	defer speech.Close()
+
+	translateResult, err := sarvam.SpeechToTextTranslate(speech, sarvam.SpeechToTextTranslateParams{
+		Model:  &sarvam.SpeechToTextTranslateModelSaarasV2dot5,
+		Prompt: sarvam.Ptr("This is a conversation is a greeting"),
 	})
 	if err != nil {
 		log.Fatalf("Speech-to-text-translate failed: %v", err)

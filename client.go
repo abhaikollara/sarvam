@@ -112,25 +112,8 @@ func (c *Client) makeMultipartRequest(endpoint, filePath string, model *SpeechTo
 }
 
 // buildSpeechToTextTranslateRequest builds a multipart form request for speech-to-text translation.
-func (c *Client) buildSpeechToTextTranslateRequest(endpoint string, params SpeechToTextTranslateParams) (*http.Response, error) {
-	if params.FilePath == "" && params.File == nil && params.Reader == nil {
-		return nil, fmt.Errorf("one of FilePath, File, or Reader must be provided")
-	}
-
-	var file *os.File
+func (c *Client) buildSpeechToTextTranslateRequest(endpoint string, speech io.Reader, params SpeechToTextTranslateParams) (*http.Response, error) {
 	var err error
-	var isReader bool
-	if params.FilePath != "" {
-		file, err = os.Open(params.FilePath)
-		if err != nil {
-			return nil, fmt.Errorf("failed to open file: %w", err)
-		}
-		defer file.Close()
-	} else if params.File != nil {
-		file = params.File
-	} else if params.Reader != nil {
-		isReader = true
-	}
 
 	// Create a buffer to store the multipart form data
 	var requestBody bytes.Buffer
@@ -138,24 +121,13 @@ func (c *Client) buildSpeechToTextTranslateRequest(endpoint string, params Speec
 
 	// Create a form file field
 	var part io.Writer
-	if isReader {
-		part, err = writer.CreateFormField("file")
-		if err != nil {
-			return nil, fmt.Errorf("failed to create form field: %w", err)
-		}
-		_, err = io.Copy(part, params.Reader)
-		if err != nil {
-			return nil, fmt.Errorf("failed to copy reader content: %w", err)
-		}
-	} else {
-		part, err = writer.CreateFormFile("file", file.Name())
-		if err != nil {
-			return nil, fmt.Errorf("failed to create form file: %w", err)
-		}
-		_, err = io.Copy(part, file)
-		if err != nil {
-			return nil, fmt.Errorf("failed to copy file content: %w", err)
-		}
+	part, err = writer.CreateFormFile("file", "speech.wav")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create form file: %w", err)
+	}
+	_, err = io.Copy(part, speech)
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy file content: %w", err)
 	}
 
 	// Add prompt parameter if provided
@@ -279,11 +251,11 @@ func SpeechToText(params SpeechToTextParams) (*SpeechToTextResponse, error) {
 }
 
 // SpeechToTextTranslate is a package-level function that uses the default client
-func SpeechToTextTranslate(params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
+func SpeechToTextTranslate(speech io.Reader, params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
-	return defaultClient.SpeechToTextTranslate(params)
+	return defaultClient.SpeechToTextTranslate(speech, params)
 }
 
 // ChatCompletion is a package-level function that uses the default client
