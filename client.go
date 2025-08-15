@@ -296,7 +296,7 @@ func Transliterate(input string, sourceLanguage Language, targetLanguage Languag
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
-	return defaultClient.Transliterate(input, sourceLanguage, targetLanguage)
+	return defaultClient.Transliterate(input, sourceLanguage, targetLanguage, nil)
 }
 
 // TextToSpeech is a package-level function that uses the default client

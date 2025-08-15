@@ -197,10 +197,26 @@ func (t *TransliterationResponse) String() string {
 	return string(t.TransliteratedText)
 }
 
+// SpokenFormNumeralsLanguage specifies the language for spoken form numerals.
+type SpokenFormNumeralsLanguage string
+
+const (
+	// SpokenFormNumeralsLanguageEnglish represents English numerals in spoken form.
+	SpokenFormNumeralsLanguageEnglish SpokenFormNumeralsLanguage = "english"
+	// SpokenFormNumeralsLanguageNative represents native language numerals in spoken form.
+	SpokenFormNumeralsLanguageNative SpokenFormNumeralsLanguage = "native"
+)
+
+// TransliterateParams contains all optional parameters for transliteration.
+type TransliterateParams struct {
+	NumeralsFormat             *NumeralsFormat
+	SpokenFormNumeralsLanguage *SpokenFormNumeralsLanguage
+	SpokenForm                 *bool
+}
+
 // Transliterate converts text from one script to another while preserving the original pronunciation.
-// TODO: There are more params. See docs. Add them. This would change the signature I guess.
-func (c *Client) Transliterate(input string, sourceLanguage Language, targetLanguage Language) (*TransliterationResponse, error) {
-	if l := len(input); l >= 1000 {
+func (c *Client) Transliterate(input string, sourceLanguage Language, targetLanguage Language, params *TransliterateParams) (*TransliterationResponse, error) {
+	if l := len(input); l > 1000 {
 		return nil, &ErrInputTooLong{
 			InputLength: l,
 			MaxLength:   1000,
@@ -211,6 +227,19 @@ func (c *Client) Transliterate(input string, sourceLanguage Language, targetLang
 		"input":                input,
 		"source_language_code": sourceLanguage,
 		"target_language_code": targetLanguage,
+	}
+
+	// Add optional parameters if provided
+	if params != nil {
+		if params.NumeralsFormat != nil {
+			payload["numerals_format"] = *params.NumeralsFormat
+		}
+		if params.SpokenFormNumeralsLanguage != nil {
+			payload["spoken_form_numerals_language"] = *params.SpokenFormNumeralsLanguage
+		}
+		if params.SpokenForm != nil {
+			payload["spoken_form"] = *params.SpokenForm
+		}
 	}
 
 	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/transliterate", payload)

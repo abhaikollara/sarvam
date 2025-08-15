@@ -71,7 +71,7 @@ func main() {
 	fmt.Printf("Identified Language: %s, Script: %s\n", identifyResponse.Language, identifyResponse.Script)
 
 	// transliterate
-	transliterateResponse, err := client.Transliterate("namaskaaram", sarvam.LanguageAuto, sarvam.LanguageMalayalam)
+	transliterateResponse, err := client.Transliterate("namaskaaram", sarvam.LanguageAuto, sarvam.LanguageMalayalam, nil)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
