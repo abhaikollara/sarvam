@@ -128,7 +128,7 @@ func TestDefaultClientNil(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "default client not initialized")
 
-	_, err = ChatCompletion(&ChatCompletionParams{})
+	_, err = ChatCompletion([]Message{}, ChatCompletionModelSarvamM, &ChatCompletionParams{})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "default client not initialized")
 

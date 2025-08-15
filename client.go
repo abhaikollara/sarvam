@@ -80,8 +80,8 @@ func (c *Client) buildSpeechToTextRequest(endpoint string, speech io.Reader, par
 	}
 
 	// Add language_code parameter if provided
-	if params.LanguageCode != nil {
-		err = writer.WriteField("language_code", string(*params.LanguageCode))
+	if params.Language != nil {
+		err = writer.WriteField("language_code", string(*params.Language))
 		if err != nil {
 			return nil, fmt.Errorf("failed to write language_code field: %w", err)
 		}
@@ -252,27 +252,11 @@ func SpeechToTextTranslate(speech io.Reader, params SpeechToTextTranslateParams)
 }
 
 // ChatCompletion is a package-level function that uses the default client
-func ChatCompletion(req *ChatCompletionParams) (*ChatCompletionResponse, error) {
+func ChatCompletion(messages []Message, model ChatCompletionModel, req *ChatCompletionParams) (*ChatCompletionResponse, error) {
 	if defaultClient == nil {
 		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
 	}
-	return defaultClient.ChatCompletion(req)
-}
-
-// SimpleChatCompletion is a package-level function that uses the default client
-func SimpleChatCompletion(messages []Message, model ChatCompletionModel) (*ChatCompletionResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
-	}
-	return defaultClient.SimpleChatCompletion(messages, model)
-}
-
-// ChatCompletionWithParams is a package-level function that uses the default client
-func ChatCompletionWithParams(params *ChatCompletionParams) (*ChatCompletionResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
-	}
-	return defaultClient.ChatCompletionWithParams(params)
+	return defaultClient.ChatCompletion(messages, model, req)
 }
 
 // Translate is a package-level function that uses the default client

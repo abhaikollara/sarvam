@@ -54,7 +54,7 @@ func (c *Client) TextToSpeech(text string, targetLanguage Language, params TextT
 		"target_language_code": targetLanguage,
 	}
 	if params.Speaker != nil {
-		payload["voice"] = *params.Speaker
+		payload["speaker"] = *params.Speaker
 	}
 	// TODO: Add constraints as per the API docs for pitch, pace, etc...
 	if params.Pitch != nil {

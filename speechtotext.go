@@ -33,7 +33,7 @@ type SpeechToTextResponse struct {
 	Transcript         string              `json:"transcript"`
 	Timestamps         *Timestamps         `json:"timestamps,omitempty"`
 	DiarizedTranscript *DiarizedTranscript `json:"diarized_transcript,omitempty"`
-	LanguageCode       Language            `json:"language_code"`
+	Language           Language            `json:"language_code"`
 }
 
 // String returns the transcribed text.
@@ -44,7 +44,7 @@ func (s *SpeechToTextResponse) String() string {
 // SpeechToTextParams contains parameters for speech-to-text conversion.
 type SpeechToTextParams struct {
 	Model          *SpeechToTextModel // Optional: Model to use (default: saarika:v2.5)
-	LanguageCode   *Language          // Optional: Language code for the input audio
+	Language       *Language          // Optional: Language code for the input audio
 	WithTimestamps *bool              // Optional: Whether to include timestamps in response
 }
 
@@ -80,16 +80,16 @@ func (c *Client) SpeechToText(speech io.Reader, params SpeechToTextParams) (*Spe
 		Transcript:         response.Transcript,
 		Timestamps:         response.Timestamps,
 		DiarizedTranscript: response.DiarizedTranscript,
-		LanguageCode:       mapLanguageCodeToLanguage(response.LanguageCode),
+		Language:           mapLanguageCodeToLanguage(response.LanguageCode),
 	}, nil
 }
 
 // SpeechToTextTranslateResponse represents the result of a speech-to-text-translate operation.
 type SpeechToTextTranslateResponse struct {
-	RequestId          string              `json:"request_id"`
-	Transcript         string              `json:"transcript"`
-	LanguageCode       Language            `json:"language_code"`
-	DiarizedTranscript *DiarizedTranscript `json:"diarized_transcript,omitempty"`
+	RequestId          string
+	Transcript         string
+	Language           Language
+	DiarizedTranscript *DiarizedTranscript
 }
 
 // String returns the transcribed and translated text.
@@ -162,7 +162,7 @@ func (c *Client) SpeechToTextTranslate(speech io.Reader, params SpeechToTextTran
 	return &SpeechToTextTranslateResponse{
 		RequestId:          response.RequestId,
 		Transcript:         response.Transcript,
-		LanguageCode:       mapLanguageCodeToLanguage(response.LanguageCode),
+		Language:           mapLanguageCodeToLanguage(response.LanguageCode),
 		DiarizedTranscript: response.DiarizedTranscript,
 	}, nil
 }

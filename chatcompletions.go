@@ -12,6 +12,33 @@ type Message struct {
 	Content string `json:"content"`
 }
 
+type MessageRole string
+
+const (
+	MessageRoleSystem    MessageRole = "system"
+	MessageRoleUser      MessageRole = "user"
+	MessageRoleAssistant MessageRole = "assistant"
+)
+
+func NewMessage(role MessageRole, content string) Message {
+	return Message{
+		Role:    string(role),
+		Content: content,
+	}
+}
+
+func NewSystemMessage(content string) Message {
+	return NewMessage(MessageRoleSystem, content)
+}
+
+func NewUserMessage(content string) Message {
+	return NewMessage(MessageRoleUser, content)
+}
+
+func NewAssistantMessage(content string) Message {
+	return NewMessage(MessageRoleAssistant, content)
+}
+
 // ReasoningEffort represents the reasoning effort level for chat completions.
 type ReasoningEffort string
 
@@ -23,19 +50,17 @@ const (
 
 // ChatCompletionParams represents the parameters for chat completions.
 type ChatCompletionParams struct {
-	Messages         []Message           `json:"messages"`
-	Model            ChatCompletionModel `json:"model"`
-	Temperature      *float64            `json:"temperature,omitempty"`
-	TopP             *float64            `json:"top_p,omitempty"`
-	ReasoningEffort  *ReasoningEffort    `json:"reasoning_effort,omitempty"`
-	MaxTokens        *int                `json:"max_tokens,omitempty"`
-	Stream           *bool               `json:"stream,omitempty"`
-	Stop             interface{}         `json:"stop,omitempty"` // string or []string. TODO: Find a way to make this more type safe.
-	N                *int                `json:"n,omitempty"`
-	Seed             *int64              `json:"seed,omitempty"`
-	FrequencyPenalty *float64            `json:"frequency_penalty,omitempty"`
-	PresencePenalty  *float64            `json:"presence_penalty,omitempty"`
-	WikiGrounding    *bool               `json:"wiki_grounding,omitempty"`
+	Temperature      *float64
+	TopP             *float64
+	ReasoningEffort  *ReasoningEffort
+	MaxTokens        *int
+	Stream           *bool
+	Stop             interface{} // string or []string. TODO: Find a way to make this more type safe.
+	N                *int
+	Seed             *int64
+	FrequencyPenalty *float64
+	PresencePenalty  *float64
+	WikiGrounding    *bool
 }
 
 // ChatCompletionChoice represents a single completion choice.
@@ -63,21 +88,73 @@ type ChatCompletionResponse struct {
 }
 
 // ChatCompletion creates a chat completion using the Sarvam AI API.
-func (c *Client) ChatCompletion(req *ChatCompletionParams) (*ChatCompletionResponse, error) {
-	if req == nil {
-		return nil, fmt.Errorf("request cannot be nil")
-	}
-
-	if len(req.Messages) == 0 {
+func (c *Client) ChatCompletion(messages []Message, model ChatCompletionModel, req *ChatCompletionParams) (*ChatCompletionResponse, error) {
+	if len(messages) == 0 {
 		return nil, fmt.Errorf("messages cannot be empty")
 	}
 
-	if req.Model == "" {
+	if model == "" {
 		return nil, fmt.Errorf("model is required")
 	}
 	// TODO: Include constraints as per the API docs
 
-	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/v1/chat/completions", req)
+	type chatCompletionRequest struct {
+		Model            ChatCompletionModel `json:"model"`
+		Messages         []Message           `json:"messages"`
+		Temperature      *float64            `json:"temperature,omitempty"`
+		TopP             *float64            `json:"top_p,omitempty"`
+		ReasoningEffort  *ReasoningEffort    `json:"reasoning_effort,omitempty"`
+		MaxTokens        *int                `json:"max_tokens,omitempty"`
+		Stream           *bool               `json:"stream,omitempty"`
+		Stop             interface{}         `json:"stop,omitempty"` // string or []string. TODO: Find a way to make this more type safe.
+		N                *int                `json:"n,omitempty"`
+		Seed             *int64              `json:"seed,omitempty"`
+		FrequencyPenalty *float64            `json:"frequency_penalty,omitempty"`
+		PresencePenalty  *float64            `json:"presence_penalty,omitempty"`
+		WikiGrounding    *bool               `json:"wiki_grounding,omitempty"`
+	}
+
+	var payload chatCompletionRequest
+	payload.Model = model
+	payload.Messages = messages
+
+	if req != nil {
+		if req.Temperature != nil {
+			payload.Temperature = req.Temperature
+		}
+		if req.TopP != nil {
+			payload.TopP = req.TopP
+		}
+		if req.ReasoningEffort != nil {
+			payload.ReasoningEffort = req.ReasoningEffort
+		}
+		if req.MaxTokens != nil {
+			payload.MaxTokens = req.MaxTokens
+		}
+		if req.Stream != nil {
+			payload.Stream = req.Stream
+		}
+		if req.Stop != nil {
+			payload.Stop = req.Stop
+		}
+		if req.N != nil {
+			payload.N = req.N
+		}
+		if req.Seed != nil {
+			payload.Seed = req.Seed
+		}
+		if req.FrequencyPenalty != nil {
+			payload.FrequencyPenalty = req.FrequencyPenalty
+		}
+		if req.PresencePenalty != nil {
+			payload.PresencePenalty = req.PresencePenalty
+		}
+		if req.WikiGrounding != nil {
+			payload.WikiGrounding = req.WikiGrounding
+		}
+	}
+
+	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/v1/chat/completions", payload)
 	if err != nil {
 		return nil, err
 	}
@@ -93,20 +170,6 @@ func (c *Client) ChatCompletion(req *ChatCompletionParams) (*ChatCompletionRespo
 	}
 
 	return &response, nil
-}
-
-// SimpleChatCompletion is a convenience function for simple chat completions.
-func (c *Client) SimpleChatCompletion(messages []Message, model ChatCompletionModel) (*ChatCompletionResponse, error) {
-	req := &ChatCompletionParams{
-		Messages: messages,
-		Model:    model,
-	}
-	return c.ChatCompletion(req)
-}
-
-// ChatCompletionWithParams creates a chat completion with custom parameters.
-func (c *Client) ChatCompletionWithParams(params *ChatCompletionParams) (*ChatCompletionResponse, error) {
-	return c.ChatCompletion(params)
 }
 
 // GetFirstChoiceContent returns the content of the first choice from the response.

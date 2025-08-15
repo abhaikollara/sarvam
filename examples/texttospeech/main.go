@@ -12,12 +12,12 @@ func main() {
 	client := sarvam.NewClient(apiKey)
 
 	response, err := client.TextToSpeech("नमस्ते, आप कैसे हैं?", sarvam.LanguageHindi, sarvam.TextToSpeechParams{
-		Speaker: &sarvam.SpeakerAnushka,
+		Speaker: &sarvam.SpeakerHitesh,
 		Model:   &sarvam.TextToSpeechModelBulbulV2,
 	})
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 
-	response.Save("output")
+	response.Save("output.wav")
 }

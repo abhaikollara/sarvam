@@ -36,17 +36,20 @@ func clientExample(apiKey string, filepath string) {
 	}
 	defer speechFile.Close()
 
-	response, err := client.SpeechToText(speechFile, sarvam.SpeechToTextParams{
-		Language:       sarvam.Ptr(sarvam.LanguageMalayalam),
-		Model:          sarvam.Ptr(sarvam.SpeechToTextModelSaarikaV2),
-		WithTimestamps: sarvam.Ptr(true),
+	response, err := client.SpeechToTextTranslate(speechFile, sarvam.SpeechToTextTranslateParams{
+		Model:      sarvam.Ptr(sarvam.SpeechToTextTranslateModelSaarasV2),
+		AudioCodec: sarvam.Ptr(sarvam.AudioCodecWav),
+		Prompt:     sarvam.Ptr("This is a greeting"),
 	})
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("Converting file: %s\n", filepath)
-	fmt.Printf("Transcript: %s\n", response.Transcript)
-	fmt.Printf("Timestamps: %v\n", response.Timestamps)
+	fmt.Printf("Transcript (translated to English): %s\n", response.Transcript)
+	fmt.Printf("Detected source language: %s\n", response.Language)
+	if response.DiarizedTranscript != nil {
+		fmt.Printf("Diarized transcript: %v\n", response.DiarizedTranscript)
+	}
 }
 
 func defaultClientExample(filepath string) {
@@ -57,15 +60,18 @@ func defaultClientExample(filepath string) {
 	}
 	defer speechFile.Close()
 
-	response, err := sarvam.SpeechToText(speechFile, sarvam.SpeechToTextParams{
-		Language:       sarvam.Ptr(sarvam.LanguageMalayalam),
-		Model:          sarvam.Ptr(sarvam.SpeechToTextModelSaarikaV2),
-		WithTimestamps: sarvam.Ptr(true),
+	response, err := sarvam.SpeechToTextTranslate(speechFile, sarvam.SpeechToTextTranslateParams{
+		Model:      sarvam.Ptr(sarvam.SpeechToTextTranslateModelSaarasV2dot5),
+		AudioCodec: sarvam.Ptr(sarvam.AudioCodecWav),
+		Prompt:     sarvam.Ptr("This is a greeting"),
 	})
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 	fmt.Printf("Converting file: %s\n", filepath)
-	fmt.Printf("Transcript: %s\n", response.Transcript)
-	fmt.Printf("Timestamps: %v\n", response.Timestamps)
+	fmt.Printf("Transcript (translated to English): %s\n", response.Transcript)
+	fmt.Printf("Detected source language: %s\n", response.Language)
+	if response.DiarizedTranscript != nil {
+		fmt.Printf("Diarized transcript: %v\n", response.DiarizedTranscript)
+	}
 }
