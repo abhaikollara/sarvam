@@ -9,16 +9,15 @@ An unofficial Go SDK for the [Sarvam AI](https://sarvam.ai) APIs, providing easy
 
 > **⚠️ Breaking Changes Notice**: This SDK is currently in pre-v1 development. Breaking changes may occur until v1.0.0 is released. Please pin your dependency version if you need stability in production environments.
 
-## 🌟 API Parity (wip)
+## 🌟 Features
 
-- [x] Text Translation
-- [x] Language Identification
-- [x] Text-to-Speech
-- [x] Chat Completions
-- [x] Transliteration
-- [x] Speech to text
-- [x] Speech to text translation
-
+- **Text Translation** - Translate text between 22+ Indian languages
+- **Language Identification** - Automatically detect the language of input text
+- **Text-to-Speech** - Convert text to natural-sounding speech
+- **Speech-to-Text** - Transcribe audio to text with support for Indian languages
+- **Speech-to-Text Translation** - Transcribe and translate audio in one request
+- **Chat Completions** - Generate AI responses using Sarvam's language models
+- **Transliteration** - Convert text between different writing scripts
 
 ## 🚀 Quick Start
 
@@ -32,64 +31,6 @@ go get code.abhai.dev/sarvam
 
 The SDK provides both instance-based and package-level APIs for convenience.
 
-#### Using Package-Level Functions (Recommended for simple use cases)
-
-```go
-package main
-
-import (
-    "fmt"
-    "log"
-    "os"
-    
-    "code.abhai.dev/sarvam"
-)
-
-func main() {
-    // Set API key (or set SARVAM_API_KEY environment variable)
-    sarvam.SetAPIKey("your-api-key-here")
-    
-    // Use package-level functions directly
-    result, err := sarvam.SpeechToText(sarvam.SpeechToTextParams{
-        FilePath: "audio.wav",
-        Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    fmt.Println("Transcript:", result.Transcript)
-}
-```
-
-#### Using Instance-Based Client (Recommended for advanced use cases)
-
-```go
-package main
-
-import (
-    "fmt"
-    "log"
-    
-    "code.abhai.dev/sarvam"
-)
-
-func main() {
-    // Create a client instance
-    client := sarvam.NewClient("your-api-key-here")
-    
-    // Use the client instance
-    result, err := client.SpeechToText(sarvam.SpeechToTextParams{
-        FilePath: "audio.wav",
-        Model:    &sarvam.SpeechToTextModelSaarikaV2dot5,
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    fmt.Println("Transcript:", result.Transcript)
-}
-```
 
 ### Environment Variable
 
@@ -101,38 +42,6 @@ export SARVAM_API_KEY="your-api-key-here"
 
 The SDK will automatically pick up this environment variable on initialization.
 
-### Available Package-Level Functions
-
-The SDK provides the following package-level functions that use the default client:
-
-#### Speech & Audio
-- `sarvam.SpeechToText(params)` - Convert speech to text
-- `sarvam.SpeechToTextTranslate(params)` - Convert speech to text with translation to English
-- `sarvam.TextToSpeech(params)` - Convert text to speech
-
-#### Chat & AI
-- `sarvam.ChatCompletion(request)` - Generate chat completions
-- `sarvam.SimpleChatCompletion(messages, model)` - Generate chat completions with simplified parameters
-- `sarvam.ChatCompletionWithParams(params)` - Generate chat completions with custom parameters
-
-#### Translation & Language
-- `sarvam.Translate(input, sourceLang, targetLang)` - Translate text between languages
-- `sarvam.TranslateWithParams(params)` - Translate text with advanced parameters
-- `sarvam.IdentifyLanguage(input)` - Identify the language of input text
-- `sarvam.Transliterate(input, sourceLang, targetLang)` - Convert text between scripts
-
-#### Utility Functions
-- `sarvam.SetAPIKey(key)` - Set the API key for the default client
-- `sarvam.GetDefaultClient()` - Get the current default client instance
-
-### Error Handling
-
-All package-level functions return appropriate errors if:
-- The default client is not initialized (call `SetAPIKey()` first)
-- The API key is invalid or expired
-- The request parameters are invalid
-- The API returns an error response
-
 ## 📖 Examples
 
 Check out the [examples](./examples) directory for complete working examples:
@@ -141,6 +50,9 @@ Check out the [examples](./examples) directory for complete working examples:
 - [Text-to-Speech](./examples/texttospeech/main.go)
 - [Chat Completions](./examples/chatcompletions/chatcompletion.go)
 - [Speech-to-Text](./examples/speechtotext/main.go)
+- [Speech-to-Text Translation](./examples/speechtotexttranslate/main.go)
+- [Language Identification](./examples/languageidentification/main.go)
+- [Transliteration](./examples/transliteratetext/main.go)
 
 
 ## 🤝 Contributing
@@ -179,7 +91,7 @@ This SDK is an **unofficial** client for the Sarvam API and is not affiliated wi
 
 All trademarks, service marks, and copyrights associated with Sarvam belong to their respective owners.
 
-Use this SDK at your own risk. Please review and comply with Sarvam’s terms of service and API usage policies.
+Use this SDK at your own risk. Please review and comply with Sarvam's terms of service and API usage policies.
 
 ---
 
