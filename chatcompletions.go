@@ -55,7 +55,7 @@ type ChatCompletionParams struct {
 	ReasoningEffort  *ReasoningEffort
 	MaxTokens        *int
 	Stream           *bool
-	Stop             interface{} // string or []string. TODO: Find a way to make this more type safe.
+	Stop             []string // string or []string. TODO: Find a way to make this more type safe.
 	N                *int
 	Seed             *int64
 	FrequencyPenalty *float64
@@ -134,8 +134,12 @@ func (c *Client) ChatCompletion(messages []Message, model ChatCompletionModel, r
 		if req.Stream != nil {
 			payload.Stream = req.Stream
 		}
-		if req.Stop != nil {
-			payload.Stop = req.Stop
+		if len(req.Stop) > 0 {
+			if len(req.Stop) == 1 {
+				payload.Stop = req.Stop[0]
+			} else {
+				payload.Stop = req.Stop
+			}
 		}
 		if req.N != nil {
 			payload.N = req.N
