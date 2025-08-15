@@ -1,6 +1,6 @@
 # SarvamAI Go SDK
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/abhaikollara/sarvam.svg)](https://pkg.go.dev/github.com/abhaikollara/sarvam)
+[![Go Reference](https://pkg.go.dev/badge/code.abhai.dev/sarvam.svg)](https://pkg.go.dev/code.abhai.dev/sarvam)
 [![Go Report Card](https://goreportcard.com/badge/abhaikollara/sarvam)](https://goreportcard.com/report/abhaikollara/sarvam)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/abhaikollara/sarvam)](https://golang.org/dl/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
