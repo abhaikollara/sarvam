@@ -1,6 +1,7 @@
 package sarvam
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -29,7 +30,7 @@ func TestMakeHTTPRequest(t *testing.T) {
 	client := NewClient(testApiKey)
 	client.SetBaseURL(httpTestServer.URL)
 
-	response, err := client.makeJsonHTTPRequest("GET", httpTestServer.URL+"/v1/test", nil)
+	response, err := client.makeJsonHTTPRequest(context.Background(), "GET", httpTestServer.URL+"/v1/test", nil)
 	assert.NoError(t, err)
 	assert.Equal(t, response.StatusCode, 200)
 }
@@ -124,15 +125,16 @@ func TestDefaultClientNil(t *testing.T) {
 	defaultClient = nil
 
 	// Test that package-level functions return error when client is nil
-	_, err := SpeechToText(io.NopCloser(strings.NewReader("")), SpeechToTextParams{})
+	ctx := context.Background()
+	_, err := SpeechToText(ctx, io.NopCloser(strings.NewReader("")), SpeechToTextParams{})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "default client not initialized")
 
-	_, err = ChatCompletion([]Message{}, ChatCompletionModelSarvamM, &ChatCompletionParams{})
+	_, err = ChatCompletion(ctx, []Message{}, ChatCompletionModelSarvamM, &ChatCompletionParams{})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "default client not initialized")
 
-	_, err = Translate("hello", LanguageEnglish, LanguageHindi, nil)
+	_, err = Translate(ctx, "hello", LanguageEnglish, LanguageHindi, nil)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "default client not initialized")
 }

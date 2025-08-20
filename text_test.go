@@ -1,14 +1,16 @@
 package sarvam
 
 import (
+	"context"
 	"testing"
 )
 
 func TestTranslateWithParams(t *testing.T) {
 	client := NewClient("test-key")
+	ctx := context.Background()
 
 	// Test basic translation
-	_, err := client.Translate("Hello", LanguageEnglish, LanguageHindi, nil)
+	_, err := client.Translate(ctx, "Hello", LanguageEnglish, LanguageHindi, nil)
 	if err == nil {
 		t.Error("Expected error for invalid API key, got nil")
 	}
@@ -30,7 +32,7 @@ func TestTranslateWithParams(t *testing.T) {
 		NumeralsFormat:      &numeralsFormat,
 	}
 
-	_, err = client.Translate("Hello", LanguageEnglish, LanguageHindi, options)
+	_, err = client.Translate(ctx, "Hello", LanguageEnglish, LanguageHindi, options)
 	if err == nil {
 		t.Error("Expected error for invalid API key, got nil")
 	}
@@ -38,6 +40,7 @@ func TestTranslateWithParams(t *testing.T) {
 
 func TestTranslateInputLengthValidation(t *testing.T) {
 	client := NewClient("test-key")
+	ctx := context.Background()
 
 	// Test input length validation for Mayura:v1 (1000 chars)
 	longInput := string(make([]byte, 1001))
@@ -51,7 +54,7 @@ func TestTranslateInputLengthValidation(t *testing.T) {
 		Model:         &model,
 	}
 
-	_, err := client.Translate(longInput, LanguageEnglish, LanguageHindi, options)
+	_, err := client.Translate(ctx, longInput, LanguageEnglish, LanguageHindi, options)
 	if err == nil {
 		t.Error("Expected error for input too long, got nil")
 	}
@@ -64,7 +67,7 @@ func TestTranslateInputLengthValidation(t *testing.T) {
 		Model: &sarvamModel,
 	}
 
-	_, err = client.Translate(veryLongInput, LanguageEnglish, LanguageHindi, sarvamOptions)
+	_, err = client.Translate(ctx, veryLongInput, LanguageEnglish, LanguageHindi, sarvamOptions)
 	if err == nil {
 		t.Error("Expected error for input too long, got nil")
 	}

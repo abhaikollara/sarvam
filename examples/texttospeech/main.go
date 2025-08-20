@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 
@@ -11,7 +12,7 @@ func main() {
 	apiKey := os.Getenv("SARVAM_API_KEY")
 	client := sarvam.NewClient(apiKey)
 
-	response, err := client.TextToSpeech("नमस्ते, आप कैसे हैं?", sarvam.LanguageHindi, sarvam.TextToSpeechParams{
+	response, err := client.TextToSpeech(context.Background(), "नमस्ते, आप कैसे हैं?", sarvam.LanguageHindi, sarvam.TextToSpeechParams{
 		Speaker: &sarvam.SpeakerHitesh,
 		Model:   &sarvam.TextToSpeechModelBulbulV2,
 	})

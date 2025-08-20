@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -36,7 +37,7 @@ func clientExample(apiKey string, filepath string) {
 	}
 	defer speechFile.Close()
 
-	response, err := client.SpeechToTextTranslate(speechFile, sarvam.SpeechToTextTranslateParams{
+	response, err := client.SpeechToTextTranslate(context.Background(), speechFile, sarvam.SpeechToTextTranslateParams{
 		Model:      sarvam.Ptr(sarvam.SpeechToTextTranslateModelSaarasV2),
 		AudioCodec: sarvam.Ptr(sarvam.AudioCodecWav),
 		Prompt:     sarvam.Ptr("This is a greeting"),
@@ -60,7 +61,7 @@ func defaultClientExample(filepath string) {
 	}
 	defer speechFile.Close()
 
-	response, err := sarvam.SpeechToTextTranslate(speechFile, sarvam.SpeechToTextTranslateParams{
+	response, err := sarvam.SpeechToTextTranslate(context.Background(), speechFile, sarvam.SpeechToTextTranslateParams{
 		Model:      sarvam.Ptr(sarvam.SpeechToTextTranslateModelSaarasV2dot5),
 		AudioCodec: sarvam.Ptr(sarvam.AudioCodecWav),
 		Prompt:     sarvam.Ptr("This is a greeting"),

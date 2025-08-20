@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +12,7 @@ import (
 func main() {
 	client := sarvam.NewClient(os.Getenv("SARVAM_API_KEY"))
 
-	response, err := client.ChatCompletion([]sarvam.Message{
+	response, err := client.ChatCompletion(context.Background(), []sarvam.Message{
 		sarvam.NewSystemMessage("You are a helpful assistant that answers in short"),
 		sarvam.NewUserMessage("Hello, how are you?"),
 	}, sarvam.ChatCompletionModelSarvamM, &sarvam.ChatCompletionParams{})

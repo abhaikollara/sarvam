@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +12,7 @@ import (
 func main() {
 	client := sarvam.NewClient(os.Getenv("SARVAM_API_KEY"))
 
-	response, err := client.Translate("All men must serve", sarvam.LanguageEnglish, sarvam.LanguageHindi, &sarvam.TranslateParams{
+	response, err := client.Translate(context.Background(), "All men must serve", sarvam.LanguageEnglish, sarvam.LanguageHindi, &sarvam.TranslateParams{
 		OutputScript: sarvam.Ptr(sarvam.OutputScriptFullyNative),
 	})
 	if err != nil {

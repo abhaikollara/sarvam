@@ -1,6 +1,7 @@
 package sarvam
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -49,8 +50,13 @@ type SpeechToTextParams struct {
 }
 
 // SpeechToText converts speech from an audio file to text.
-func (c *Client) SpeechToText(speech io.Reader, params SpeechToTextParams) (*SpeechToTextResponse, error) {
-	resp, err := c.buildSpeechToTextRequest("/speech-to-text", speech, params)
+func (c *Client) SpeechToText(ctx context.Context, speech io.Reader, params SpeechToTextParams) (*SpeechToTextResponse, error) {
+	// Input validation
+	if speech == nil {
+		return nil, fmt.Errorf("speech input cannot be nil")
+	}
+
+	resp, err := c.buildSpeechToTextRequest(ctx, "/speech-to-text", speech, params)
 	if err != nil {
 		return nil, err
 	}
@@ -134,8 +140,13 @@ var (
 )
 
 // SpeechToTextTranslate automatically detects the input language, transcribes the speech, and translates the text to English.
-func (c *Client) SpeechToTextTranslate(speech io.Reader, params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
-	resp, err := c.buildSpeechToTextTranslateRequest("/speech-to-text-translate", speech, params)
+func (c *Client) SpeechToTextTranslate(ctx context.Context, speech io.Reader, params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
+	// Input validation
+	if speech == nil {
+		return nil, fmt.Errorf("speech input cannot be nil")
+	}
+
+	resp, err := c.buildSpeechToTextTranslateRequest(ctx, "/speech-to-text-translate", speech, params)
 	if err != nil {
 		return nil, err
 	}

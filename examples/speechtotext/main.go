@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -36,7 +37,7 @@ func clientExample(apiKey string, filepath string) {
 	}
 	defer speechFile.Close()
 
-	response, err := client.SpeechToText(speechFile, sarvam.SpeechToTextParams{
+	response, err := client.SpeechToText(context.Background(), speechFile, sarvam.SpeechToTextParams{
 		Language:       sarvam.Ptr(sarvam.LanguageMalayalam),
 		Model:          sarvam.Ptr(sarvam.SpeechToTextModelSaarikaV2),
 		WithTimestamps: sarvam.Ptr(true),
@@ -57,7 +58,7 @@ func defaultClientExample(filepath string) {
 	}
 	defer speechFile.Close()
 
-	response, err := sarvam.SpeechToText(speechFile, sarvam.SpeechToTextParams{
+	response, err := sarvam.SpeechToText(context.Background(), speechFile, sarvam.SpeechToTextParams{
 		Language:       sarvam.Ptr(sarvam.LanguageMalayalam),
 		Model:          sarvam.Ptr(sarvam.SpeechToTextModelSaarikaV2),
 		WithTimestamps: sarvam.Ptr(true),
