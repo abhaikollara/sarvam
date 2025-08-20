@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +12,7 @@ import (
 func main() {
 	client := sarvam.NewClient(os.Getenv("SARVAM_API_KEY"))
 
-	response, err := client.IdentifyLanguage("सभी पुरुषों को सेवा करनी चाहिए")
+	response, err := client.IdentifyLanguage(context.Background(), "सभी पुरुषों को सेवा करनी चाहिए")
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}

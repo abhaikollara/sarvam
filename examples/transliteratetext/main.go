@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +12,7 @@ import (
 func main() {
 	client := sarvam.NewClient(os.Getenv("SARVAM_API_KEY"))
 
-	response, err := client.Transliterate("enthokke und vishesham", sarvam.LanguageEnglish, sarvam.LanguageMalayalam, &sarvam.TransliterateParams{
+	response, err := client.Transliterate(context.Background(), "enthokke und vishesham", sarvam.LanguageEnglish, sarvam.LanguageMalayalam, &sarvam.TransliterateParams{
 		NumeralsFormat: sarvam.Ptr(sarvam.NumeralsFormatInternational),
 	})
 	if err != nil {

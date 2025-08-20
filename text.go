@@ -1,9 +1,12 @@
 package sarvam
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
+	"unicode/utf8"
 )
 
 // SpeakerGender represents the gender of the speaker for better translations.
@@ -72,15 +75,20 @@ type TranslateParams struct {
 	NumeralsFormat      *NumeralsFormat
 }
 
-// TranslateWithParams converts text from one language to another with custom parameters.
-func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode Language, params *TranslateParams) (*TranslationResponse, error) {
+// Translate converts text from one language to another with custom parameters.
+func (c *Client) Translate(ctx context.Context, input string, sourceLanguageCode, targetLanguageCode Language, params *TranslateParams) (*TranslationResponse, error) {
+	// Input validation
+	if err := validateTranslateInput(input, sourceLanguageCode, targetLanguageCode, params); err != nil {
+		return nil, fmt.Errorf("validation failed: %w", err)
+	}
+
 	// Validate input length based on model
 	maxLength := 2000 // Default for sarvam-translate:v1
 	if params != nil && params.Model != nil && *params.Model == TranslationModelMayuraV1 {
 		maxLength = 1000
 	}
 
-	if l := len(input); l > maxLength {
+	if l := utf8.RuneCountInString(input); l > maxLength {
 		return nil, &ErrInputTooLong{
 			InputLength: l,
 			MaxLength:   maxLength,
@@ -115,7 +123,7 @@ func (c *Client) Translate(input string, sourceLanguageCode, targetLanguageCode 
 		}
 	}
 
-	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/translate", reqBody)
+	resp, err := c.makeJsonHTTPRequest(ctx, http.MethodPost, c.baseURL+"/translate", reqBody)
 	if err != nil {
 		return nil, err
 	}
@@ -152,11 +160,16 @@ type LanguageIdentificationResponse struct {
 }
 
 // IdentifyLanguage identifies the language (e.g., en-IN, hi-IN) and script (e.g., Latin, Devanagari) of the input text, supporting multiple languages.
-func (c *Client) IdentifyLanguage(input string) (*LanguageIdentificationResponse, error) {
+func (c *Client) IdentifyLanguage(ctx context.Context, input string) (*LanguageIdentificationResponse, error) {
+	// Input validation
+	if err := validateLanguageIdentificationInput(input); err != nil {
+		return nil, fmt.Errorf("validation failed: %w", err)
+	}
+
 	var payload = map[string]string{
 		"input": input,
 	}
-	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/text-lid", payload)
+	resp, err := c.makeJsonHTTPRequest(ctx, http.MethodPost, c.baseURL+"/text-lid", payload)
 	if err != nil {
 		return nil, err
 	}
@@ -215,8 +228,13 @@ type TransliterateParams struct {
 }
 
 // Transliterate converts text from one script to another while preserving the original pronunciation.
-func (c *Client) Transliterate(input string, sourceLanguage Language, targetLanguage Language, params *TransliterateParams) (*TransliterationResponse, error) {
-	if l := len(input); l > 1000 {
+func (c *Client) Transliterate(ctx context.Context, input string, sourceLanguage Language, targetLanguage Language, params *TransliterateParams) (*TransliterationResponse, error) {
+	// Input validation
+	if err := validateTransliterateInput(input, sourceLanguage, targetLanguage); err != nil {
+		return nil, fmt.Errorf("validation failed: %w", err)
+	}
+
+	if l := utf8.RuneCountInString(input); l > 1000 {
 		return nil, &ErrInputTooLong{
 			InputLength: l,
 			MaxLength:   1000,
@@ -242,7 +260,7 @@ func (c *Client) Transliterate(input string, sourceLanguage Language, targetLang
 		}
 	}
 
-	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/transliterate", payload)
+	resp, err := c.makeJsonHTTPRequest(ctx, http.MethodPost, c.baseURL+"/transliterate", payload)
 	if err != nil {
 		return nil, err
 	}
@@ -279,4 +297,58 @@ type ErrInputTooLong struct {
 
 func (e *ErrInputTooLong) Error() string {
 	return fmt.Sprintf("input length must be less than %d characters, got %d", e.MaxLength, e.InputLength)
+}
+
+// validateTranslateInput validates inputs for translation requests
+func validateTranslateInput(input string, sourceLanguage, targetLanguage Language, params *TranslateParams) error {
+	if strings.TrimSpace(input) == "" {
+		return fmt.Errorf("input text cannot be empty")
+	}
+	if !utf8.ValidString(input) {
+		return fmt.Errorf("input text must be valid UTF-8")
+	}
+	if sourceLanguage == "" {
+		return fmt.Errorf("source language cannot be empty")
+	}
+	if targetLanguage == "" {
+		return fmt.Errorf("target language cannot be empty")
+	}
+	if sourceLanguage == targetLanguage {
+		return fmt.Errorf("source and target languages cannot be the same")
+	}
+	return nil
+}
+
+// validateLanguageIdentificationInput validates inputs for language identification requests
+func validateLanguageIdentificationInput(input string) error {
+	if strings.TrimSpace(input) == "" {
+		return fmt.Errorf("input text cannot be empty")
+	}
+	if !utf8.ValidString(input) {
+		return fmt.Errorf("input text must be valid UTF-8")
+	}
+	if utf8.RuneCountInString(input) > 1000 {
+		return fmt.Errorf("input text is too long (max 1000 characters)")
+	}
+	return nil
+}
+
+// validateTransliterateInput validates inputs for transliteration requests
+func validateTransliterateInput(input string, sourceLanguage, targetLanguage Language) error {
+	if strings.TrimSpace(input) == "" {
+		return fmt.Errorf("input text cannot be empty")
+	}
+	if !utf8.ValidString(input) {
+		return fmt.Errorf("input text must be valid UTF-8")
+	}
+	if sourceLanguage == "" {
+		return fmt.Errorf("source language cannot be empty")
+	}
+	if targetLanguage == "" {
+		return fmt.Errorf("target language cannot be empty")
+	}
+	if sourceLanguage == targetLanguage {
+		return fmt.Errorf("source and target languages cannot be the same")
+	}
+	return nil
 }

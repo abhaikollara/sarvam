@@ -1,9 +1,11 @@
 package sarvam
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 // Message represents a message in the chat conversation.
@@ -88,15 +90,11 @@ type ChatCompletionResponse struct {
 }
 
 // ChatCompletion creates a chat completion using the Sarvam AI API.
-func (c *Client) ChatCompletion(messages []Message, model ChatCompletionModel, req *ChatCompletionParams) (*ChatCompletionResponse, error) {
-	if len(messages) == 0 {
-		return nil, fmt.Errorf("messages cannot be empty")
+func (c *Client) ChatCompletion(ctx context.Context, messages []Message, model ChatCompletionModel, req *ChatCompletionParams) (*ChatCompletionResponse, error) {
+	// Input validation
+	if err := validateChatCompletionInput(messages, model, req); err != nil {
+		return nil, fmt.Errorf("validation failed: %w", err)
 	}
-
-	if model == "" {
-		return nil, fmt.Errorf("model is required")
-	}
-	// TODO: Include constraints as per the API docs
 
 	type chatCompletionRequest struct {
 		Model            ChatCompletionModel `json:"model"`
@@ -158,7 +156,7 @@ func (c *Client) ChatCompletion(messages []Message, model ChatCompletionModel, r
 		}
 	}
 
-	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/v1/chat/completions", payload)
+	resp, err := c.makeJsonHTTPRequest(ctx, http.MethodPost, c.baseURL+"/v1/chat/completions", payload)
 	if err != nil {
 		return nil, err
 	}
@@ -190,4 +188,57 @@ func (r *ChatCompletionResponse) GetChoiceContent(index int) string {
 		return r.Choices[index].Message.Content
 	}
 	return ""
+}
+
+// validateChatCompletionInput validates inputs for chat completion requests
+func validateChatCompletionInput(messages []Message, model ChatCompletionModel, params *ChatCompletionParams) error {
+	if len(messages) == 0 {
+		return fmt.Errorf("messages cannot be empty")
+	}
+
+	if model == "" {
+		return fmt.Errorf("model is required")
+	}
+
+	// Validate messages
+	for i, msg := range messages {
+		if strings.TrimSpace(msg.Role) == "" {
+			return fmt.Errorf("message %d: role cannot be empty", i)
+		}
+		if strings.TrimSpace(msg.Content) == "" {
+			return fmt.Errorf("message %d: content cannot be empty", i)
+		}
+
+		// Validate role values
+		switch msg.Role {
+		case string(MessageRoleSystem), string(MessageRoleUser), string(MessageRoleAssistant):
+			// Valid roles
+		default:
+			return fmt.Errorf("message %d: invalid role '%s'", i, msg.Role)
+		}
+	}
+
+	// Validate optional parameters
+	if params != nil {
+		if params.Temperature != nil && (*params.Temperature < 0.0 || *params.Temperature > 2.0) {
+			return fmt.Errorf("temperature must be between 0.0 and 2.0")
+		}
+		if params.TopP != nil && (*params.TopP < 0.0 || *params.TopP > 1.0) {
+			return fmt.Errorf("top_p must be between 0.0 and 1.0")
+		}
+		if params.MaxTokens != nil && *params.MaxTokens <= 0 {
+			return fmt.Errorf("max_tokens must be greater than 0")
+		}
+		if params.N != nil && *params.N <= 0 {
+			return fmt.Errorf("n must be greater than 0")
+		}
+		if params.FrequencyPenalty != nil && (*params.FrequencyPenalty < -2.0 || *params.FrequencyPenalty > 2.0) {
+			return fmt.Errorf("frequency_penalty must be between -2.0 and 2.0")
+		}
+		if params.PresencePenalty != nil && (*params.PresencePenalty < -2.0 || *params.PresencePenalty > 2.0) {
+			return fmt.Errorf("presence_penalty must be between -2.0 and 2.0")
+		}
+	}
+
+	return nil
 }

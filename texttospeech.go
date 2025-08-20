@@ -1,10 +1,14 @@
 package sarvam
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
+	"strings"
+	"unicode/utf8"
 )
 
 // TextToSpeechResponse represents the result of a text-to-speech operation.
@@ -48,7 +52,12 @@ var (
 )
 
 // TextToSpeech converts text to speech in the specified language.
-func (c *Client) TextToSpeech(text string, targetLanguage Language, params TextToSpeechParams) (*TextToSpeechResponse, error) {
+func (c *Client) TextToSpeech(ctx context.Context, text string, targetLanguage Language, params TextToSpeechParams) (*TextToSpeechResponse, error) {
+	// Input validation
+	if err := validateTextToSpeechInput(text, targetLanguage, params); err != nil {
+		return nil, fmt.Errorf("validation failed: %w", err)
+	}
+
 	var payload = map[string]any{
 		"text":                 text,
 		"target_language_code": targetLanguage,
@@ -76,7 +85,7 @@ func (c *Client) TextToSpeech(text string, targetLanguage Language, params TextT
 		payload["model"] = *params.Model
 	}
 
-	resp, err := c.makeJsonHTTPRequest(http.MethodPost, c.baseURL+"/text-to-speech", payload)
+	resp, err := c.makeJsonHTTPRequest(ctx, http.MethodPost, c.baseURL+"/text-to-speech", payload)
 	if err != nil {
 		return nil, err
 	}
@@ -123,4 +132,35 @@ func convertBase64ToBytes(base64Str string) ([]byte, error) {
 		return nil, err
 	}
 	return decodedBytes, nil
+}
+
+// validateTextToSpeechInput validates inputs for text-to-speech requests
+func validateTextToSpeechInput(text string, targetLanguage Language, params TextToSpeechParams) error {
+	if strings.TrimSpace(text) == "" {
+		return fmt.Errorf("text cannot be empty")
+	}
+	if !utf8.ValidString(text) {
+		return fmt.Errorf("text must be valid UTF-8")
+	}
+	if targetLanguage == "" {
+		return fmt.Errorf("target language cannot be empty")
+	}
+
+	// Validate text length (typical limit for TTS systems)
+	if utf8.RuneCountInString(text) > 5000 {
+		return fmt.Errorf("text is too long (max 5000 characters)")
+	}
+
+	// Validate optional parameters
+	if params.Pitch != nil && (*params.Pitch < 0.5 || *params.Pitch > 2.0) {
+		return fmt.Errorf("pitch must be between 0.5 and 2.0")
+	}
+	if params.Pace != nil && (*params.Pace < 0.5 || *params.Pace > 2.0) {
+		return fmt.Errorf("pace must be between 0.5 and 2.0")
+	}
+	if params.Loudness != nil && (*params.Loudness < 0.5 || *params.Loudness > 2.0) {
+		return fmt.Errorf("loudness must be between 0.5 and 2.0")
+	}
+
+	return nil
 }

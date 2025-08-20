@@ -3,12 +3,14 @@ package sarvam
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"sync"
 )
 
 // Client represents a Sarvam AI API client.
@@ -29,32 +31,36 @@ func (c *Client) SetBaseURL(baseURL string) {
 }
 
 // makeJsonHTTPRequest sends a JSON HTTP request to the Sarvam AI API.
-func (c *Client) makeJsonHTTPRequest(method, url string, body any) (*http.Response, error) {
+func (c *Client) makeJsonHTTPRequest(ctx context.Context, method, url string, body any) (*http.Response, error) {
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to marshal request body: %w", err)
 	}
 
 	bodyBytes := bytes.NewBuffer(jsonBody)
-	return c.makeHTTPRequest(method, url, bodyBytes, "application/json")
-
+	return c.makeHTTPRequest(ctx, method, url, bodyBytes, "application/json")
 }
 
 // makeHTTPRequest sends an HTTP request to the Sarvam AI API.
-func (c *Client) makeHTTPRequest(method, url string, body *bytes.Buffer, contentType string) (*http.Response, error) {
-	req, err := http.NewRequest(method, url, body)
+func (c *Client) makeHTTPRequest(ctx context.Context, method, url string, body *bytes.Buffer, contentType string) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("api-subscription-key", c.apiKey)
 
-	return http.DefaultClient.Do(req)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("HTTP request failed: %w", err)
+	}
+
+	return resp, nil
 }
 
 // buildSpeechToTextRequest builds a multipart form request for speech-to-text.
-func (c *Client) buildSpeechToTextRequest(endpoint string, speech io.Reader, params SpeechToTextParams) (*http.Response, error) {
+func (c *Client) buildSpeechToTextRequest(ctx context.Context, endpoint string, speech io.Reader, params SpeechToTextParams) (*http.Response, error) {
 
 	// Create a buffer to store the multipart form data
 	var requestBody bytes.Buffer
@@ -101,11 +107,11 @@ func (c *Client) buildSpeechToTextRequest(endpoint string, speech io.Reader, par
 		return nil, fmt.Errorf("failed to close multipart writer: %w", err)
 	}
 
-	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
+	return c.makeHTTPRequest(ctx, http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
 }
 
 // buildSpeechToTextTranslateRequest builds a multipart form request for speech-to-text translation.
-func (c *Client) buildSpeechToTextTranslateRequest(endpoint string, speech io.Reader, params SpeechToTextTranslateParams) (*http.Response, error) {
+func (c *Client) buildSpeechToTextTranslateRequest(ctx context.Context, endpoint string, speech io.Reader, params SpeechToTextTranslateParams) (*http.Response, error) {
 	var err error
 
 	// Create a buffer to store the multipart form data
@@ -153,7 +159,7 @@ func (c *Client) buildSpeechToTextTranslateRequest(endpoint string, speech io.Re
 		return nil, fmt.Errorf("failed to close multipart writer: %w", err)
 	}
 
-	return c.makeHTTPRequest(http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
+	return c.makeHTTPRequest(ctx, http.MethodPost, c.baseURL+endpoint, &requestBody, writer.FormDataContentType())
 }
 
 // HTTPError represents an error response from the Sarvam AI API.
@@ -214,79 +220,109 @@ func Ptr[T any](v T) *T {
 }
 
 // defaultClient is the default client instance used by package-level functions
-var defaultClient *Client
+var (
+	defaultClient *Client
+	clientMutex   sync.RWMutex
+	clientOnce    sync.Once
+)
 
-// init initializes the default client with the API key from environment variable
-func init() {
+// initDefaultClient initializes the default client with the API key from environment variable
+func initDefaultClient() {
 	if apiKey := os.Getenv("SARVAM_API_KEY"); apiKey != "" {
 		defaultClient = NewClient(apiKey)
 	}
 }
 
+// init initializes the default client
+func init() {
+	clientOnce.Do(initDefaultClient)
+}
+
 // SetAPIKey sets the API key for the default client and creates a new client instance
 func SetAPIKey(apiKey string) {
+	clientMutex.Lock()
+	defer clientMutex.Unlock()
 	defaultClient = NewClient(apiKey)
 }
 
 // GetDefaultClient returns the default client instance
 func GetDefaultClient() *Client {
+	clientMutex.RLock()
+	defer clientMutex.RUnlock()
 	return defaultClient
+}
+
+// getDefaultClientSafe safely returns the default client or an error if not initialized
+func getDefaultClientSafe() (*Client, error) {
+	clientMutex.RLock()
+	defer clientMutex.RUnlock()
+	if defaultClient == nil {
+		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+	}
+	return defaultClient, nil
 }
 
 // Package-level convenience functions that use the default client
 
 // SpeechToText is a package-level function that uses the default client
-func SpeechToText(speech io.Reader, params SpeechToTextParams) (*SpeechToTextResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+func SpeechToText(ctx context.Context, speech io.Reader, params SpeechToTextParams) (*SpeechToTextResponse, error) {
+	client, err := getDefaultClientSafe()
+	if err != nil {
+		return nil, err
 	}
-	return defaultClient.SpeechToText(speech, params)
+	return client.SpeechToText(ctx, speech, params)
 }
 
 // SpeechToTextTranslate is a package-level function that uses the default client
-func SpeechToTextTranslate(speech io.Reader, params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+func SpeechToTextTranslate(ctx context.Context, speech io.Reader, params SpeechToTextTranslateParams) (*SpeechToTextTranslateResponse, error) {
+	client, err := getDefaultClientSafe()
+	if err != nil {
+		return nil, err
 	}
-	return defaultClient.SpeechToTextTranslate(speech, params)
+	return client.SpeechToTextTranslate(ctx, speech, params)
 }
 
 // ChatCompletion is a package-level function that uses the default client
-func ChatCompletion(messages []Message, model ChatCompletionModel, req *ChatCompletionParams) (*ChatCompletionResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+func ChatCompletion(ctx context.Context, messages []Message, model ChatCompletionModel, req *ChatCompletionParams) (*ChatCompletionResponse, error) {
+	client, err := getDefaultClientSafe()
+	if err != nil {
+		return nil, err
 	}
-	return defaultClient.ChatCompletion(messages, model, req)
+	return client.ChatCompletion(ctx, messages, model, req)
 }
 
 // Translate is a package-level function that uses the default client
-func Translate(input string, sourceLanguageCode, targetLanguageCode Language, params *TranslateParams) (*TranslationResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+func Translate(ctx context.Context, input string, sourceLanguageCode, targetLanguageCode Language, params *TranslateParams) (*TranslationResponse, error) {
+	client, err := getDefaultClientSafe()
+	if err != nil {
+		return nil, err
 	}
-	return defaultClient.Translate(input, sourceLanguageCode, targetLanguageCode, params)
+	return client.Translate(ctx, input, sourceLanguageCode, targetLanguageCode, params)
 }
 
 // IdentifyLanguage is a package-level function that uses the default client
-func IdentifyLanguage(input string) (*LanguageIdentificationResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+func IdentifyLanguage(ctx context.Context, input string) (*LanguageIdentificationResponse, error) {
+	client, err := getDefaultClientSafe()
+	if err != nil {
+		return nil, err
 	}
-	return defaultClient.IdentifyLanguage(input)
+	return client.IdentifyLanguage(ctx, input)
 }
 
 // Transliterate is a package-level function that uses the default client
-func Transliterate(input string, sourceLanguage Language, targetLanguage Language) (*TransliterationResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+func Transliterate(ctx context.Context, input string, sourceLanguage Language, targetLanguage Language) (*TransliterationResponse, error) {
+	client, err := getDefaultClientSafe()
+	if err != nil {
+		return nil, err
 	}
-	return defaultClient.Transliterate(input, sourceLanguage, targetLanguage, nil)
+	return client.Transliterate(ctx, input, sourceLanguage, targetLanguage, nil)
 }
 
 // TextToSpeech is a package-level function that uses the default client
-func TextToSpeech(text string, targetLanguage Language, params TextToSpeechParams) (*TextToSpeechResponse, error) {
-	if defaultClient == nil {
-		return nil, fmt.Errorf("default client not initialized. Call SetAPIKey() or set SARVAM_API_KEY environment variable")
+func TextToSpeech(ctx context.Context, text string, targetLanguage Language, params TextToSpeechParams) (*TextToSpeechResponse, error) {
+	client, err := getDefaultClientSafe()
+	if err != nil {
+		return nil, err
 	}
-	return defaultClient.TextToSpeech(text, targetLanguage, params)
+	return client.TextToSpeech(ctx, text, targetLanguage, params)
 }
